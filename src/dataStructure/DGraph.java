@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import gameClient.Fruit;
+import gameClient.Robot;
 /*
  * This class represents a Graph, A graph is a group of nodes and group of edges connecting the nodes.
  * If you want to learn more about graphs we recommend to visit https://en.wikipedia.org/wiki/Graph_(discrete_mathematics).
@@ -19,6 +22,8 @@ public class DGraph implements graph, Serializable{
 	//TODO add value isConnected that gives old answer if MC hasn't changed
 	public HashMap<Integer, Node> Nodes;
 	public HashMap<Integer, HashMap<Integer,Edge>> Edges;
+	public HashMap<Integer, Robot> Robots;
+	public HashMap<Fruit, Double> Fruits;
 	private int EdgeCount;
 	private int MC;
 	/*
@@ -27,6 +32,8 @@ public class DGraph implements graph, Serializable{
 	public DGraph() {
 		this.Nodes = new HashMap<Integer, Node>();
 		this.Edges = new HashMap<Integer, HashMap<Integer,Edge>>();
+		this.Robots = new HashMap<Integer, Robot>();
+		this.Fruits = new HashMap<Fruit, Double>();
 		this.EdgeCount = 0;
 		this.MC = 0;
 	}
@@ -251,5 +258,17 @@ public class DGraph implements graph, Serializable{
 	public HashMap<Integer, HashMap<Integer, Edge>> getEdges() {
 		HashMap<Integer, HashMap<Integer, Edge>> Copy = (HashMap<Integer, HashMap<Integer, Edge>>) this.Edges;
 		return Copy;
+	}
+	public void addRobot(Robot r) {
+		this.Robots.put(r.getID(), r);
+	}
+	public void addFruit(Fruit f) {
+		this.Fruits.put(f,f.getValue());
+	}
+	public void romoveFruit(Fruit f) {
+		if (!this.Fruits.containsKey(f)) {
+			throw new RuntimeException("The given Fruit doesn't belong to the Fruits in the Game");
+		}
+		this.Fruits.remove(f);
 	}
 }

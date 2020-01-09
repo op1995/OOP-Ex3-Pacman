@@ -13,5 +13,7 @@
 	</classpathentry>
 	<classpathentry kind="var" path="JSON"/>
 	<classpathentry kind="var" path="GameServer_jar"/>
+	<classpathentry kind="var" path="ECLIPSE_HOME"/>
+	<classpathentry kind="lib" path="lib/GameServer_v0.27.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
