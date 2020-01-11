@@ -27,7 +27,6 @@ import oop_dataStructure.oop_graph;
  * 10. prints the game results (after "game over"): (line 63)
  *  
  * @author boaz.benmoshe
- *
  */
 public class SimpleGameClient {
 	public static void main(String[] a) {

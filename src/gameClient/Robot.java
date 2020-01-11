@@ -1,4 +1,7 @@
 package gameClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import dataStructure.*;
 import utils.Point3D;
 public class Robot {
@@ -8,20 +11,17 @@ public class Robot {
 	private int dest; //current final node to get to
 	private double speed;
 	private Point3D position; // based on pos.
-	private String[] pattern = {"\"id\":", "\"value\":", "\"src\":", "\"dest\":", "\"speed\":", "\"pos\":"};
-	public Robot(String dataString) {
-		dataString = dataString.substring(12, dataString.length()-3);
-		for (String currentReplace: pattern) {
-			dataString.replace(currentReplace, "");
-		}
-		String[] dataArray = dataString.split(",");
-		
-		this.id = Integer.valueOf(dataArray[0]);
-		this.value = Double.valueOf(dataArray[1]);
-		this.src = Integer.valueOf(dataArray[2]);
-		this.dest = Integer.valueOf(dataArray[3]);
-		this.speed = Double.valueOf(dataArray[4]);
-		this.position = new Point3D(Double.valueOf(dataArray[5]), Double.valueOf(dataArray[6]), Double.valueOf(dataArray[7]));		
+	public Robot(String Json) {
+		 try {
+			 	JSONObject g = new JSONObject(Json);
+	        	this.id = g.getJSONObject("Robot").getInt("id");
+	            String pos = g.getJSONObject("Robot").getString("pos");
+	            this.position = new Point3D(pos);
+	            this.value = g.getJSONObject("Robot").getDouble("value");
+	            this.src = g.getJSONObject("Robot").getInt("src");
+	            this.dest = g.getJSONObject("Robot").getInt("dest");
+	            this.speed = g.getJSONObject("Robot").getDouble("speed");
+	        } catch (Exception e) {System.out.println(e);}
 	}
 	public int getID() {
 		return this.id;

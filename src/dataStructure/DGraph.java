@@ -8,8 +8,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import gameClient.Fruit;
 import gameClient.Robot;
+import utils.Point3D;
 /*
  * This class represents a Graph, A graph is a group of nodes and group of edges connecting the nodes.
  * If you want to learn more about graphs we recommend to visit https://en.wikipedia.org/wiki/Graph_(discrete_mathematics).
@@ -270,5 +274,28 @@ public class DGraph implements graph, Serializable{
 			throw new RuntimeException("The given Fruit doesn't belong to the Fruits in the Game");
 		}
 		this.Fruits.remove(f);
+	}
+	/*
+	 * 
+	 */
+	public void init(String graphJson) {
+		 try {
+			 	JSONObject g = new JSONObject(graphJson);
+	            JSONArray n = g.getJSONArray("Nodes");
+	            JSONArray e = g.getJSONArray("Edges");
+	            int key;
+	            for(int i = 0; i < n.length(); ++i) {
+	            	key = n.getJSONObject(i).getInt("id");
+	                String pos = n.getJSONObject(i).getString("pos");
+	                Point3D position = new Point3D(pos);
+	                this.addNode(new Node(key,0,position,""));
+	            }
+	            for(int i = 0; i < e.length(); ++i) {
+	                int src = e.getJSONObject(i).getInt("src");
+	                int dest = e.getJSONObject(i).getInt("dest");
+	                double weight = e.getJSONObject(i).getDouble("w");
+	                this.connect(src, dest, weight);
+	            }
+	        } catch (Exception e) {System.out.println(e);}
 	}
 }

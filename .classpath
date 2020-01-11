@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="data"/>
+	<classpathentry kind="src" path="pics"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -12,8 +14,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="var" path="JSON"/>
-	<classpathentry kind="var" path="GameServer_jar"/>
 	<classpathentry kind="var" path="ECLIPSE_HOME"/>
-	<classpathentry kind="lib" path="lib/GameServer_v0.27.jar"/>
+	<classpathentry kind="lib" path="C:/Users/shahe/git/OOP-Ex3-Pacman/lib/GameServer_v0.27.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

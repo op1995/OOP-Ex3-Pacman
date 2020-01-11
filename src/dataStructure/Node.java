@@ -17,7 +17,7 @@ public class Node implements node_data, Serializable{
 	private double weight;
 	private Point3D Location;
 	private String Info;
-	private ArrayList<Node> Neighbors = new ArrayList<Node>();
+	private ArrayList<Node> Neighbors = new ArrayList<Node>(); 
 	/*
 	 * constructor
 	 */
