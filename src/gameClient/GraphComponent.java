@@ -107,31 +107,34 @@ public class GraphComponent extends JComponent {
 					g.drawString(Double.toString(Weight), x1*75/100 + x0*1/4, y1*75/100 + y0*1/4);
 				}
 			}
+			
 			for (int r : this.graph.Robots.keySet()) {
-				int x0 = (int) ((graph.Robots.get(r).getPos().x()-rangex.get_min())*X);
-				int y0 = (int) ((graph.Robots.get(r).getPos().y()-rangey.get_max())*Y);
+				int x = (int) ((graph.Robots.get(r).getPos().x()-rangex.get_min())*X);
+				int y = (int) ((graph.Robots.get(r).getPos().y()-rangey.get_max())*Y);
 				try {
 					BufferedImage image = ImageIO.read(new File("pics\\pacman1.gif"));
-					g.drawImage(image.getScaledInstance(NODE_RADIUS*5, -1, Image.SCALE_SMOOTH), x0-NODE_DIAMETER, y0-NODE_DIAMETER,null);
+					g.drawImage(image.getScaledInstance(NODE_RADIUS*5, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
 					g.setColor(Color.BLACK);
 				} catch (IOException e) {System.out.println(e);}
 			}
-		    for(Fruit f : this.graph.Fruits.keySet()) {
-		    	int x0 = (int) ((f.getPos().x()-rangex.get_min())*X);
-				int y0 = (int) ((f.getPos().y()-rangey.get_max())*Y);
-				try {
-					if(f.getType() == -1) {
-						BufferedImage image = ImageIO.read(new File("pics\\orange.gif"));
-						g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x0-NODE_DIAMETER, y0-NODE_DIAMETER,null);
-						g.setColor(Color.BLACK);
-					}
-					else {
-						BufferedImage image = ImageIO.read(new File("pics\\apple.gif"));
-						g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x0-NODE_DIAMETER, y0-NODE_DIAMETER,null);
-						g.setColor(Color.BLACK);
-					}
-				} catch (IOException e) {System.out.println(e);}
-		    }
+			try {
+				for(Fruit f : this.graph.Fruits.keySet()) {
+			    	int x = (int) ((f.getPos().x()-rangex.get_min())*X);
+					int y = (int) ((f.getPos().y()-rangey.get_max())*Y);
+					try {
+						if(f.getType() == -1) {
+							BufferedImage image = ImageIO.read(new File("pics\\orange.gif"));
+							g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
+							g.setColor(Color.BLACK);
+						}
+						else {
+							BufferedImage image = ImageIO.read(new File("pics\\apple.gif"));
+							g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
+							g.setColor(Color.BLACK);
+						}
+					} catch (IOException e) {System.out.println(e);}
+			    }
+			} catch (Exception e) {}
 		}
 	  public void saveImage(String name,String type) {
 		  	BufferedImage image = new BufferedImage(getWidth(),getHeight(), BufferedImage.TYPE_3BYTE_BGR);

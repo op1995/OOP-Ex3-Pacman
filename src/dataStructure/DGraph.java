@@ -23,7 +23,6 @@ public class DGraph implements graph, Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -5469746264553631873L;
-	//TODO add value isConnected that gives old answer if MC hasn't changed
 	public HashMap<Integer, Node> Nodes;
 	public HashMap<Integer, HashMap<Integer,Edge>> Edges;
 	public HashMap<Integer, Robot> Robots;

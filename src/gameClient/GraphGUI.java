@@ -1,19 +1,38 @@
  package gameClient;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import dataStructure.DGraph;
-import dataStructure.Edge;
-import dataStructure.Node;
-import gameClient.GraphComponent;
-import utils.Point3D;
-import utils.Range;
+import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Scanner;
 
-import java.io.*;
-import java.util.*;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import Server.Game_Server;
+import Server.game_service;
+import dataStructure.DGraph;
+import dataStructure.Node;
+import utils.Range;
 public class GraphGUI{
     /** Holds the graph GUI component */
-    private GraphComponent graphComponent; 
+    GraphComponent graphComponent; 
     private DGraph Graph;
     /** The window */
     private static JFrame frame;
@@ -33,6 +52,10 @@ public class GraphGUI{
   	private int height;
  	private Range rangex;
   	private Range rangey;
+  	private boolean chooseRobot;
+  	private boolean AddRobot;
+  	private game_service game;
+  	private int a = -1;
     private static boolean windowsOn = false;
     /**
      *  Constructor that builds a completely empty graph.
@@ -62,8 +85,11 @@ public class GraphGUI{
     JMenuItem saveImage = new JMenuItem();
     JMenuItem Load = new JMenuItem();
 	JMenuItem Help = new JMenuItem();
-	JMenuItem i4 = new JMenuItem(); 
-	JMenuItem i5 = new JMenuItem();
+	JMenuItem Auto = new JMenuItem(); 
+	JMenuItem Player = new JMenuItem();
+	JMenuItem StartGame = new JMenuItem();
+	JMenuItem ChooseDest = new JMenuItem();
+
     /**
      *  Create and show the GUI.
      */
@@ -78,11 +104,13 @@ public class GraphGUI{
     	    saveImage=new JMenuItem("Save Image");  
     	    Load=new JMenuItem("Load Game");  
     	    Help=new JMenuItem("Help");  
-    	    i4=new JMenuItem("Auto");  
-    	    i5=new JMenuItem("Player");  
+    	    Auto=new JMenuItem("Auto");  
+    	    Player=new JMenuItem("Player");
+    	    StartGame=new JMenuItem("StartGame");
+    	    ChooseDest=new JMenuItem("ChooseDest");
     	    menu.add(saveImage); menu.add(Load); menu.add(Help);  
-    	    submenu.add(i4); submenu.add(i5);  
-    	    menu.add(submenu);  
+    	    submenu.add(Auto); submenu.add(Player);  submenu.add(StartGame); submenu.add(ChooseDest);
+    	    menu.add(submenu);
     	    mb.add(menu);  
     	    frame.setJMenuBar(mb);  
     		// Add components
@@ -144,17 +172,71 @@ public class GraphGUI{
 				// TODO pop up a Tutorial.
 			}
 		});
-		
+		Player.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chooseRobot = false;
+				try {
+					int scenario_num = Integer.valueOf(JOptionPane.showInputDialog("Input a scenario Number between 0 to 23."));
+					if(scenario_num > 23 || scenario_num <0) {
+						JOptionPane.showMessageDialog(frame, "Please input a legal scenario Number"
+								+ "The Number should be between 0 to 23");
+					}
+					game = Game_Server.getServer(scenario_num);
+					String g = game.getGraph();
+					Graph.init(g);
+					execute();
+					String info = game.toString();
+					JSONObject line;
+					try {
+						line = new JSONObject(info);
+						System.out.println(info);
+						System.out.println(g);
+						// the list of fruits should be considered in your solution
+						Iterator<String> f_iter = game.getFruits().iterator();
+						while(f_iter.hasNext()) {
+							try {
+								System.out.println(f_iter.next());
+								Graph.addFruit(new Fruit(f_iter.next()));
+							} catch (Exception e2) {}
+						}	
+					}
+					catch (JSONException e2) {e2.printStackTrace();}
+					AddRobot = true;
+				} catch (Exception e2) {
+					JOptionPane.showMessageDialog(frame, e2);
+				}
+			}
+		});		
+		Auto.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});	
+		StartGame.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				AddRobot = false;
+				try {
+					runPlayer();
+				} catch (Exception e2) {}
+			}
+		});	
+		ChooseDest.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					a = Integer.valueOf(JOptionPane.showInputDialog(frame, "ChooseDest"));
+				} catch (Exception e2) {}
+			}
+		});
     }
-
     /**
      *  Disables all text fields and sets default text within them to empty.
      */
     public void disableAll() {
-		enterNodeData.setText("");
-		enterNodeData.setEnabled(false);
     }
-
     /**
      *  Execute the application.
      */
@@ -191,138 +273,162 @@ public class GraphGUI{
 		graphicGraph = new GraphGUI();
 		graphicGraph.execute();
     }
-
+    public void runPlayer() {
+    	chooseRobot = true;
+		game.startGame();
+		while(game.isRunning()) {
+			if(a != -1 && chosenRobot != null) {
+				game.chooseNextEdge(chosenRobot.getID(), a);
+				Graph.Robots.clear();
+				List<String> log = game.getRobots();
+				for(String robot : log) {
+					Graph.addRobot(new Robot(robot));
+				}
+			}
+			a = -1;
+			chosenRobot = null;
+			graphComponent.repaint();
+		}
+    }
     /**
      *  A mouse listener to handle click and drag actions on nodes.
      */
     private class MyMouseListener extends MouseAdapter {
-		/** How far off the center of the node was the click? */
-		private int deltaX;
-		private int deltaY;
-		/**
-		 *  This finds the shortest distance between mouse click point and line.
-		 *  Used to tell whether user clicked within 5px of an edge.
-		 *
-		 *  @return the distance between the point and the line
-		 */
-		public double findDist(Edge edge,
-				       double edgeX1, double edgeY1, double edgeX2, double edgeY2,
-				       double mouseX, double mouseY) {
-		    double edgeSlope = (edgeY2 - edgeY1) / (edgeX2 - edgeX1);
-		    double dist;
-		
-		    if (edgeSlope == 0.0) {
-			dist = -1.0;
-		    } else {
-			double perpSlope = (-1) * (1 / edgeSlope);
-			/* solving intersection:
-			   edge equation: y = edgeSlope(x) - edgeSlope(edgeX1) + edgeY1
-			   perp equation: y = perpSlope(x) - perpSlope(mouseX) + mouseY
-			   x = (edgeSlope*edgeX1 - edgeY1 - perpSlope*mouseX + mouseY) / (edgeSlope - perpSlope)
-			*/
-			double commonX = (edgeSlope*edgeX1 - edgeY1 - perpSlope*mouseX + mouseY) / (edgeSlope - perpSlope);
-			double commonY = edgeSlope*(commonX - edgeX1) + edgeY1;
-			double dx = Math.abs(mouseX - commonX);
-			double dy = Math.abs(mouseY - commonY);
-			dist = Math.sqrt(dx*dx + dy*dy);
-		    }
-		    return dist;
-		}
-
-		/**
-		 *  Tells whether x is less than y and y is less than z.
-		 *
-		 *  @return true if x <= y <= z
-		 */
-		public boolean ordered(double x, double y, double z) {
-		    return (x <= y) && (y <= z);
-		}
+//		/** How far off the center of the node was the click? */
+//		private int deltaX;
+//		private int deltaY;
+//		/**
+//		 *  This finds the shortest distance between mouse click point and line.
+//		 *  Used to tell whether user clicked within 5px of an edge.
+//		 *
+//		 *  @return the distance between the point and the line
+//		 */
+//		public double findDist(Edge edge,
+//				       double edgeX1, double edgeY1, double edgeX2, double edgeY2,
+//				       double mouseX, double mouseY) {
+//		    double edgeSlope = (edgeY2 - edgeY1) / (edgeX2 - edgeX1);
+//		    double dist;
+//		
+//		    if (edgeSlope == 0.0) {
+//			dist = -1.0;
+//		    } else {
+//			double perpSlope = (-1) * (1 / edgeSlope);
+//			/* solving intersection:
+//			   edge equation: y = edgeSlope(x) - edgeSlope(edgeX1) + edgeY1
+//			   perp equation: y = perpSlope(x) - perpSlope(mouseX) + mouseY
+//			   x = (edgeSlope*edgeX1 - edgeY1 - perpSlope*mouseX + mouseY) / (edgeSlope - perpSlope)
+//			*/
+//			double commonX = (edgeSlope*edgeX1 - edgeY1 - perpSlope*mouseX + mouseY) / (edgeSlope - perpSlope);
+//			double commonY = edgeSlope*(commonX - edgeX1) + edgeY1;
+//			double dx = Math.abs(mouseX - commonX);
+//			double dy = Math.abs(mouseY - commonY);
+//			dist = Math.sqrt(dx*dx + dy*dy);
+//		    }
+//		    return dist;
+//		}
+//
+//		/**
+//		 *  Tells whether x is less than y and y is less than z.
+//		 *
+//		 *  @return true if x <= y <= z
+//		 */
+//		public boolean ordered(double x, double y, double z) {
+//		    return (x <= y) && (y <= z);
+//		}
 
 		public void mouseDragged(MouseEvent e) {
+			
 		}
 		public void mouseReleased(MouseEvent e) {
+			AddRobot = true;
 		}
 		public void mousePressed(MouseEvent e) {
 		    double mouseX = e.getX();
 		    double mouseY = e.getY();
 		    double X=width/rangex.get_length();
 			double Y=(0-height)/rangey.get_length();
-		    // Recognize when a Robot is pressed.
-		    for (int robot : Graph.Robots.keySet()) {
-		    	int robotX = (int) ((Graph.Robots.get(robot).getPos().x()-rangex.get_min())*X);
-				int robotY = (int) ((Graph.Robots.get(robot).getPos().y()-rangey.get_max())*Y);
-				if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
-				    try {
-				    	if(Graph.Robots.containsKey(robot)) {
-					    	chosenRobot = Graph.Robots.get(robot);
-					    }
-					} catch (Exception e2) {
-						System.out.println(e2);
+			if(chooseRobot == true) {
+				game.startGame();
+				for (int robot : Graph.Robots.keySet()) {
+			    	int robotX = (int) ((Graph.Robots.get(robot).getPos().x()-rangex.get_min())*X);
+					int robotY = (int) ((Graph.Robots.get(robot).getPos().y()-rangey.get_max())*Y);
+					if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
+					    try {
+					    	if(Graph.Robots.containsKey(robot)) {
+						    	chosenRobot = Graph.Robots.get(robot);
+						    }
+						} catch (Exception e2) {
+							System.out.println(e2);
+						}
+					}
+			    }
+			    for (Fruit fruit : Graph.Fruits.keySet()) {
+			    	int robotX = (int) ((fruit.getPos().x()-rangex.get_min())*X);
+					int robotY = (int) ((fruit.getPos().y()-rangey.get_max())*Y);
+					if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
+					    try {
+					    	if(Graph.Fruits.containsKey(fruit)) {
+						    	chosenFruit = fruit;
+						    }
+						} catch (Exception e2) {
+							System.out.println(e2);
+						}
+					}
+			    }
+			    for (int node : Graph.getNodes().keySet()) {
+					double nodeX = Graph.getNode(node).getLocation().x();
+					double nodeY = Graph.getNode(node).getLocation().y();
+					if (Math.sqrt((nodeX-mouseX)*(nodeX-mouseX)+(nodeY-mouseY)*(nodeY-mouseY)) <= GraphComponent.NODE_RADIUS) {
+					    try {
+					    	if(Graph.getNodes().containsKey(node)) {
+						    	chosenNode = (Node) Graph.getNodes().get(node);
+						    }
+						} catch (Exception e2) {
+							System.out.println(e2);
+						}
+					}
+			    }
+			    if(chosenRobot != null) {
+			    	// TODO Implement a method in Graph_Algo to find the edge that the Chosen fruit belongs to. Then run it on chosenRobot and chosenFruit.
+			    	try {
+			    		while(game.isRunning()) {
+			    			System.out.println(chosenNode.getKey());
+					    	game.chooseNextEdge(chosenRobot.getID(), a);
+							Graph.Robots.clear();
+					    	for(String robot : game.getRobots()) {
+								Graph.addRobot(new Robot(robot));
+							}
+					    	graphComponent.repaint();
+			    		}
+					} catch (Exception e2) {}
+			    }
+			    chosenRobot = null;
+			}
+			if(AddRobot == true) {
+				for (int v : Graph.Nodes.keySet()) {
+			    	int nodex = (int) ((Graph.Nodes.get(v).getLocation().x()-rangex.get_min())*X);
+					int nodey = (int) ((Graph.Nodes.get(v).getLocation().y()-rangey.get_max())*Y);
+					if (Math.sqrt((nodex-mouseX)*(nodex-mouseX)+(nodey-mouseY)*(nodey-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
+						game.addRobot(v);
+						try {
+							AddRobot = false;
+							Thread.sleep(100);
+						} catch (Exception e2) {}
+						Iterator<String> r_iter = game.getRobots().iterator();
+						Graph.Robots.clear();
+						while(r_iter.hasNext()) {
+							Graph.addRobot(new Robot(r_iter.next()));
+						}
+						graphComponent.repaint();
 					}
 				}
-		    }
-		    for (Fruit fruit : Graph.Fruits.keySet()) {
-		    	int robotX = (int) ((fruit.getPos().x()-rangex.get_min())*X);
-				int robotY = (int) ((fruit.getPos().y()-rangey.get_max())*Y);
-				if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
-				    try {
-				    	if(Graph.Fruits.containsKey(fruit)) {
-					    	chosenFruit = fruit;
-					    }
-					} catch (Exception e2) {
-						System.out.println(e2);
-					}
-				}
-		    }
-	    }
+			}
+		}
 		public void mouseClicked(MouseEvent e) {
-			double mouseX = e.getX();
-		    double mouseY = e.getY();
-		    double X=width/rangex.get_length();
-			double Y=(0-height)/rangey.get_length();
-		    // Recognize when a Robot is pressed.
-		    for (int robot : Graph.Robots.keySet()) {
-		    	int robotX = (int) ((Graph.Robots.get(robot).getPos().x()-rangex.get_min())*X);
-				int robotY = (int) ((Graph.Robots.get(robot).getPos().y()-rangey.get_max())*Y);
-				if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
-				    try {
-				    	if(Graph.Robots.containsKey(robot)) {
-					    	chosenRobot = Graph.Robots.get(robot);
-					    }
-					} catch (Exception e2) {
-						System.out.println(e2);
-					}
-				}
-		    }
-		    for (Fruit fruit : Graph.Fruits.keySet()) {
-		    	int robotX = (int) ((fruit.getPos().x()-rangex.get_min())*X);
-				int robotY = (int) ((fruit.getPos().y()-rangey.get_max())*Y);
-				if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
-				    try {
-				    	if(Graph.Fruits.containsKey(fruit)) {
-					    	chosenFruit = fruit;
-					    }
-					} catch (Exception e2) {
-						System.out.println(e2);
-					}
-				}
-		    }
-//		    if (chosenRobot != null) {
-//				deltaX = chosenRobot.getPos().ix() - e.getX();
-//				deltaY = chosenRobot.getPos().iy() - e.getY();
-//		    }
-		    // Recognize when a fruit is clicked.
+			
 		}
 		public void mouseMoved(MouseEvent e) {	
-		} 
+		}
     }
-    public void PrintWhite() {
-		for(int u : Graph.getEdges().keySet()) {
-	    	for (int v : Graph.getEdges().get(u).keySet()) {
-				Graph.getEdge(u).get(v).setTag(0);	
-			}
-	    }
-		graphComponent.repaint();
-	}
     private void initializeGraph() {}
 }
