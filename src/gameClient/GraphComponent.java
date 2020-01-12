@@ -51,6 +51,7 @@ public class GraphComponent extends JComponent {
 	  private int height;
 	  private Range rangex;
 	  private Range rangey;
+	  
 	  /** 
 	   *  Constructor.
 	 * @param Graph 
@@ -69,8 +70,8 @@ public class GraphComponent extends JComponent {
 	  /**
 	   *  This method Draws the graph.
 	   */
-	  public void paint(Graphics g){
-			double X=width/rangex.get_length();
+	  public void paintNodes(Graphics g) {
+		  	double X=width/rangex.get_length();
 			double Y=(0-height)/rangey.get_length();
 			for(int v : this.graph.Nodes.keySet()) {
 				int x0= (int) ((graph.getNodes().get(v).getLocation().x()-rangex.get_min())*X);
@@ -78,6 +79,10 @@ public class GraphComponent extends JComponent {
 				g.setColor(Color.yellow);
 				g.fillOval(x0 - NODE_RADIUS, y0 - NODE_RADIUS, NODE_DIAMETER, NODE_DIAMETER);
 			}
+	  }
+	  public void paintEdges(Graphics g) {
+		  double X=width/rangex.get_length();
+			double Y=(0-height)/rangey.get_length();
 			for(int v : this.graph.Nodes.keySet()) {
 				for(int u : this.graph.Edges.get(v).keySet()) {
 					int x0= (int) ((graph.getNodes().get(v).getLocation().x()-rangex.get_min())*X);
@@ -107,7 +112,10 @@ public class GraphComponent extends JComponent {
 					g.drawString(Double.toString(Weight), x1*75/100 + x0*1/4, y1*75/100 + y0*1/4);
 				}
 			}
-			
+	  }
+	  public void paintRobots(Graphics g) {
+		  	double X=width/rangex.get_length();
+			double Y=(0-height)/rangey.get_length();
 			for (int r : this.graph.Robots.keySet()) {
 				int x = (int) ((graph.Robots.get(r).getPos().x()-rangex.get_min())*X);
 				int y = (int) ((graph.Robots.get(r).getPos().y()-rangey.get_max())*Y);
@@ -117,25 +125,34 @@ public class GraphComponent extends JComponent {
 					g.setColor(Color.BLACK);
 				} catch (IOException e) {System.out.println(e);}
 			}
-			try {
-				for(Fruit f : this.graph.Fruits.keySet()) {
-			    	int x = (int) ((f.getPos().x()-rangex.get_min())*X);
-					int y = (int) ((f.getPos().y()-rangey.get_max())*Y);
-					try {
-						if(f.getType() == -1) {
-							BufferedImage image = ImageIO.read(new File("pics\\orange.gif"));
-							g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
-							g.setColor(Color.BLACK);
-						}
-						else {
-							BufferedImage image = ImageIO.read(new File("pics\\apple.gif"));
-							g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
-							g.setColor(Color.BLACK);
-						}
-					} catch (IOException e) {System.out.println(e);}
-			    }
-			} catch (Exception e) {}
+			
 		}
+	  public void paintFruits(Graphics g) {
+		  double X=width/rangex.get_length();
+	 	  double Y=(0-height)/rangey.get_length();
+		  for(Fruit f : this.graph.Fruits.keySet()) {
+		    	int x = (int) ((f.getPos().x()-rangex.get_min())*X);
+				int y = (int) ((f.getPos().y()-rangey.get_max())*Y);
+				try {
+					if(f.getType() == -1) {
+						BufferedImage image = ImageIO.read(new File("pics\\orange.gif"));
+						g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
+						g.setColor(Color.BLACK);
+					}
+					else {
+						BufferedImage image = ImageIO.read(new File("pics\\apple.gif"));
+						g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
+						g.setColor(Color.BLACK);
+					}
+				} catch (IOException e) {System.out.println(e);}
+		    }
+	  }
+	  public void paint(Graphics g){
+			paintNodes(g);
+			paintEdges(g);
+			paintRobots(g);
+			paintFruits(g);
+	  }
 	  public void saveImage(String name,String type) {
 		  	BufferedImage image = new BufferedImage(getWidth(),getHeight(), BufferedImage.TYPE_3BYTE_BGR);
 			Graphics2D g2 = image.createGraphics();

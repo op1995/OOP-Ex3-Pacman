@@ -33,19 +33,18 @@ import utils.Point3D;
  */
 public class SimpleGameClient {
 	public static void main(String[] a) {
-		test1();}
-	public static void test1() {
+		//test1();
+		}
+	public static void test1(DGraph gg , int scenario_num) {
 		int idf = 1;
-		int scenario_num = 4;
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		for(String r: game.getRobots()) {
 			System.out.println(r);
 		}
 		String g = game.getGraph();
-		DGraph gg = new DGraph();
 		gg.init(g);
-		GraphGUI  gui = new GraphGUI(gg);
-		gui.execute();
+//		GraphGUI  gui = new GraphGUI(gg);
+		//gui.execute();
 		String info = game.toString();
 		JSONObject line;
 		try {
@@ -73,14 +72,14 @@ public class SimpleGameClient {
 		}
 		catch (JSONException e) {e.printStackTrace();}
 		game.startGame();
-		// should be a Thread!!!
 		while(game.isRunning()) {
 			try {
-//				Thread.sleep(10);
-//				if(idf%2 == 0) {
-//					gui.graphComponent.repaint();
-//				}
-//				idf++;
+				
+				if(idf%2 == 0) {
+					Thread.sleep(49);
+					//gui.graphComponent.repaint();
+				}
+				idf++;
 				moveRobots(game, gg);
 				
 			} catch (Exception e) {	}
@@ -120,7 +119,7 @@ public class SimpleGameClient {
 									gg.addFruit(new Fruit(f_iter.next()));
 								}
 							} catch (Exception e) {System.out.println(e);}
-							}
+						}
 					catch (Exception e) {System.out.println(e);}
 					}
 				} 
@@ -139,7 +138,7 @@ public class SimpleGameClient {
 		Collection<edge_data> ee = g.getE(src);
 		Iterator<edge_data> itr = ee.iterator();
 		int s = ee.size();
-		int r = 1;//(int)(Math.random()*s);
+		int r = (int)(Math.random()*s);
 		int i=0;
 		while(i<r) {itr.next();i++;}
 		ans = itr.next().getDest();

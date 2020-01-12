@@ -55,7 +55,8 @@ public class GraphGUI{
   	private boolean chooseRobot;
   	private boolean AddRobot;
   	private game_service game;
-  	private int a = -1;
+  	boolean a = false;
+  	int scenario_num = 0;
     private static boolean windowsOn = false;
     /**
      *  Constructor that builds a completely empty graph.
@@ -109,9 +110,10 @@ public class GraphGUI{
     	    StartGame=new JMenuItem("StartGame");
     	    ChooseDest=new JMenuItem("ChooseDest");
     	    menu.add(saveImage); menu.add(Load); menu.add(Help);  
-    	    submenu.add(Auto); submenu.add(Player);  submenu.add(StartGame); submenu.add(ChooseDest);
+    	    submenu.add(Auto); submenu.add(Player);  submenu.add(StartGame);
     	    menu.add(submenu);
     	    mb.add(menu);  
+    	    mb.add(ChooseDest);
     	    frame.setJMenuBar(mb);  
     		// Add components
     		createComponents(frame.getContentPane());
@@ -177,32 +179,7 @@ public class GraphGUI{
 			public void actionPerformed(ActionEvent e) {
 				chooseRobot = false;
 				try {
-					int scenario_num = Integer.valueOf(JOptionPane.showInputDialog("Input a scenario Number between 0 to 23."));
-					if(scenario_num > 23 || scenario_num <0) {
-						JOptionPane.showMessageDialog(frame, "Please input a legal scenario Number"
-								+ "The Number should be between 0 to 23");
-					}
-					game = Game_Server.getServer(scenario_num);
-					String g = game.getGraph();
-					Graph.init(g);
-					execute();
-					String info = game.toString();
-					JSONObject line;
-					try {
-						line = new JSONObject(info);
-						System.out.println(info);
-						System.out.println(g);
-						// the list of fruits should be considered in your solution
-						Iterator<String> f_iter = game.getFruits().iterator();
-						while(f_iter.hasNext()) {
-							try {
-								System.out.println(f_iter.next());
-								Graph.addFruit(new Fruit(f_iter.next()));
-							} catch (Exception e2) {}
-						}	
-					}
-					catch (JSONException e2) {e2.printStackTrace();}
-					AddRobot = true;
+					MakePlayer();
 				} catch (Exception e2) {
 					JOptionPane.showMessageDialog(frame, e2);
 				}
@@ -214,12 +191,15 @@ public class GraphGUI{
 				
 			}
 		});	
+		/*
+		 * for algorithms.
+		 */
 		StartGame.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				AddRobot = false;
 				try {
-					runPlayer();
+					userPlay();
 				} catch (Exception e2) {}
 			}
 		});	
@@ -227,15 +207,10 @@ public class GraphGUI{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					a = Integer.valueOf(JOptionPane.showInputDialog(frame, "ChooseDest"));
+					a = true;
 				} catch (Exception e2) {}
 			}
 		});
-    }
-    /**
-     *  Disables all text fields and sets default text within them to empty.
-     */
-    public void disableAll() {
     }
     /**
      *  Execute the application.
@@ -273,22 +248,36 @@ public class GraphGUI{
 		graphicGraph = new GraphGUI();
 		graphicGraph.execute();
     }
-    public void runPlayer() {
-    	chooseRobot = true;
-		game.startGame();
-		while(game.isRunning()) {
-			if(a != -1 && chosenRobot != null) {
-				game.chooseNextEdge(chosenRobot.getID(), a);
-				Graph.Robots.clear();
-				List<String> log = game.getRobots();
-				for(String robot : log) {
-					Graph.addRobot(new Robot(robot));
-				}
-			}
-			a = -1;
-			chosenRobot = null;
-			graphComponent.repaint();
+    public void MakePlayer() {
+    	scenario_num = Integer.valueOf(JOptionPane.showInputDialog("Input a scenario Number between 0 to 23."));
+		if(scenario_num > 23 || scenario_num <0) {
+			JOptionPane.showMessageDialog(frame, "Please input a legal scenario Number"
+					+ "The Number should be between 0 to 23");
 		}
+		game = Game_Server.getServer(scenario_num);
+		String g = game.getGraph();
+		Graph.init(g);
+		graphComponent.repaint();
+		String info = game.toString();
+		JSONObject line;
+		try {
+			line = new JSONObject(info);
+			System.out.println(info);
+			System.out.println(g);
+			// the list of fruits should be considered in your solution
+			Iterator<String> f_iter = game.getFruits().iterator();
+			while(f_iter.hasNext()) {
+				try {
+					System.out.println(f_iter.next());
+					Graph.addFruit(new Fruit(f_iter.next()));
+				} catch (Exception e2) {}
+			}	
+		}
+		catch (JSONException e2) {e2.printStackTrace();}
+		AddRobot = true;
+    }
+    public void userPlay() {
+    	// TODO implement.
     }
     /**
      *  A mouse listener to handle click and drag actions on nodes.
@@ -388,21 +377,6 @@ public class GraphGUI{
 						}
 					}
 			    }
-			    if(chosenRobot != null) {
-			    	// TODO Implement a method in Graph_Algo to find the edge that the Chosen fruit belongs to. Then run it on chosenRobot and chosenFruit.
-			    	try {
-			    		while(game.isRunning()) {
-			    			System.out.println(chosenNode.getKey());
-					    	game.chooseNextEdge(chosenRobot.getID(), a);
-							Graph.Robots.clear();
-					    	for(String robot : game.getRobots()) {
-								Graph.addRobot(new Robot(robot));
-							}
-					    	graphComponent.repaint();
-			    		}
-					} catch (Exception e2) {}
-			    }
-			    chosenRobot = null;
 			}
 			if(AddRobot == true) {
 				for (int v : Graph.Nodes.keySet()) {
