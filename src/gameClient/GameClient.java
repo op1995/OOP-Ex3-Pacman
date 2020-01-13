@@ -47,16 +47,22 @@ public class GameClient {
 			Iterator<String> f_iter = game.getFruits().iterator();
 			while(f_iter.hasNext()) {
 				try {
-					System.out.println(f_iter.next());
-					Graph.addFruit(new Fruit(f_iter.next()));
+					String next_fruit_string = f_iter.next();
+					System.out.println(next_fruit_string);
+					Graph.addFruit(new Fruit(next_fruit_string));
+					
+//					System.out.println(f_iter.next());
+//					Graph.addFruit(new Fruit(f_iter.next()));
+
 				} catch (Exception e) {}
 			}	
 			int src_node =0;// arbitrary node, you should start at one of the fruits
 			for(int a = 0;a<rs;a++) {
 				try {
-					game.addRobot(src_node+a);
-					System.out.println(game.getRobots());
-					Graph.addRobot(new Robot(game.getRobots().get(a)));
+					game.addRobot(src_node+a); //sets the starting node of each robot being added
+					List<String> getRobotsResult = game.getRobots();
+					System.out.println(getRobotsResult);
+					Graph.addRobot(new Robot(getRobotsResult.get(a)));
 				} catch (Exception e) {}
 			}
 		} catch (Exception e) {}

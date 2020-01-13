@@ -268,14 +268,14 @@ public class DGraph implements graph, Serializable{
 	}
 	public void addFruit(Fruit f) {
 		Robot_Algo R_Algo = new Robot_Algo(this);
-		if(R_Algo.findEdge(f) == null ) {
+		Edge edge = R_Algo.findEdge(f);
+		if(edge == null ) {
 			throw new RuntimeException("The given fruit doesn't belong to any Edge.");
 		}
-		Edge edge = R_Algo.findEdge(f);
 		f.setEdge(edge);
 		this.Fruits.put(f,edge);
 	}
-	public void romoveFruit(Fruit f) {
+	public void removeFruit(Fruit f) {
 		if (!this.Fruits.containsKey(f)) {
 			throw new RuntimeException("The given Fruit doesn't belong to the Fruits in the Game");
 		}
