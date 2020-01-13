@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import gameClient.Fruit;
 import gameClient.Robot;
+import gameClient.Robot_Algo;
 import utils.Point3D;
 /*
  * This class represents a Graph, A graph is a group of nodes and group of edges connecting the nodes.
@@ -26,7 +27,7 @@ public class DGraph implements graph, Serializable{
 	public HashMap<Integer, Node> Nodes;
 	public HashMap<Integer, HashMap<Integer,Edge>> Edges;
 	public HashMap<Integer, Robot> Robots;
-	public HashMap<Fruit, Double> Fruits;
+	public HashMap<Fruit, Edge> Fruits;
 	private int EdgeCount;
 	private int MC;
 	/*
@@ -36,7 +37,7 @@ public class DGraph implements graph, Serializable{
 		this.Nodes = new HashMap<Integer, Node>();
 		this.Edges = new HashMap<Integer, HashMap<Integer,Edge>>();
 		this.Robots = new HashMap<Integer, Robot>();
-		this.Fruits = new HashMap<Fruit, Double>();
+		this.Fruits = new HashMap<Fruit, Edge>();
 		this.EdgeCount = 0;
 		this.MC = 0;
 	}
@@ -266,7 +267,13 @@ public class DGraph implements graph, Serializable{
 		this.Robots.put(r.getID(), r);
 	}
 	public void addFruit(Fruit f) {
-		this.Fruits.put(f,f.getValue());
+		Robot_Algo R_Algo = new Robot_Algo(this);
+		if(R_Algo.findEdge(f) == null ) {
+			throw new RuntimeException("The given fruit doesn't belong to any Edge.");
+		}
+		Edge edge = R_Algo.findEdge(f);
+		f.setEdge(edge);
+		this.Fruits.put(f,edge);
 	}
 	public void romoveFruit(Fruit f) {
 		if (!this.Fruits.containsKey(f)) {
@@ -274,9 +281,6 @@ public class DGraph implements graph, Serializable{
 		}
 		this.Fruits.remove(f);
 	}
-	/*
-	 * 
-	 */
 	public void init(String graphJson) {
 		 try {
 			 	JSONObject g = new JSONObject(graphJson);

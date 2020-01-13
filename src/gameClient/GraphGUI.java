@@ -9,6 +9,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
@@ -27,8 +28,11 @@ import org.json.JSONObject;
 
 import Server.Game_Server;
 import Server.game_service;
+import algorithms.Graph_Algo;
 import dataStructure.DGraph;
 import dataStructure.Node;
+import dataStructure.node_data;
+import utils.Point3D;
 import utils.Range;
 public class GraphGUI{
     /** Holds the graph GUI component */
@@ -39,9 +43,9 @@ public class GraphGUI{
     /** The node last selected by the user. */
     private Node chosenNode;
     /** The robot last selected by the user. */
-    private Robot chosenRobot;
+    Robot chosenRobot;
     /** The fruit last selected by the user. */
-    private Fruit chosenFruit;
+    Fruit chosenFruit;
     /** Text box for editing node's data. */
     public JTextField enterNodeData;
     /** Text box for editing edge's data. */
@@ -180,6 +184,7 @@ public class GraphGUI{
 				chooseRobot = false;
 				try {
 					MakePlayer();
+					AddRobot = true;
 				} catch (Exception e2) {
 					JOptionPane.showMessageDialog(frame, e2);
 				}
@@ -199,7 +204,8 @@ public class GraphGUI{
 			public void actionPerformed(ActionEvent e) {
 				AddRobot = false;
 				try {
-					userPlay();
+					chooseRobot = true;
+					game.startGame();
 				} catch (Exception e2) {}
 			}
 		});	
@@ -257,7 +263,7 @@ public class GraphGUI{
 		game = Game_Server.getServer(scenario_num);
 		String g = game.getGraph();
 		Graph.init(g);
-		graphComponent.repaint();
+		execute();
 		String info = game.toString();
 		JSONObject line;
 		try {
@@ -268,13 +274,11 @@ public class GraphGUI{
 			Iterator<String> f_iter = game.getFruits().iterator();
 			while(f_iter.hasNext()) {
 				try {
-					System.out.println(f_iter.next());
 					Graph.addFruit(new Fruit(f_iter.next()));
 				} catch (Exception e2) {}
 			}	
 		}
 		catch (JSONException e2) {e2.printStackTrace();}
-		AddRobot = true;
     }
     public void userPlay() {
     	// TODO implement.
@@ -329,7 +333,8 @@ public class GraphGUI{
 			
 		}
 		public void mouseReleased(MouseEvent e) {
-			AddRobot = true;
+			//AddRobot = true;
+			chooseRobot = true;
 		}
 		public void mousePressed(MouseEvent e) {
 		    double mouseX = e.getX();
@@ -337,48 +342,66 @@ public class GraphGUI{
 		    double X=width/rangex.get_length();
 			double Y=(0-height)/rangey.get_length();
 			if(chooseRobot == true) {
-				game.startGame();
-				for (int robot : Graph.Robots.keySet()) {
-			    	int robotX = (int) ((Graph.Robots.get(robot).getPos().x()-rangex.get_min())*X);
-					int robotY = (int) ((Graph.Robots.get(robot).getPos().y()-rangey.get_max())*Y);
-					if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
-					    try {
-					    	if(Graph.Robots.containsKey(robot)) {
-						    	chosenRobot = Graph.Robots.get(robot);
-						    }
-						} catch (Exception e2) {
-							System.out.println(e2);
+				try {
+					for (int robot : Graph.Robots.keySet()) {
+				    	int robotX = (int) ((Graph.Robots.get(robot).getPos().x()-rangex.get_min())*X);
+						int robotY = (int) ((Graph.Robots.get(robot).getPos().y()-rangey.get_max())*Y);
+						if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
+						    try {
+						    	if(Graph.Robots.containsKey(robot)) {//TODO not needed condition (always true)
+							    	chosenRobot = Graph.Robots.get(robot);
+							    	System.out.println(chosenRobot.getID());
+							    }
+							} catch (Exception e2) {
+								System.out.println(e2);
+							}
 						}
-					}
-			    }
-			    for (Fruit fruit : Graph.Fruits.keySet()) {
-			    	int robotX = (int) ((fruit.getPos().x()-rangex.get_min())*X);
-					int robotY = (int) ((fruit.getPos().y()-rangey.get_max())*Y);
-					if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
-					    try {
-					    	if(Graph.Fruits.containsKey(fruit)) {
-						    	chosenFruit = fruit;
-						    }
-						} catch (Exception e2) {
-							System.out.println(e2);
+				    }
+				    for (Fruit fruit : Graph.Fruits.keySet()) {
+				    	int robotX = (int) ((fruit.getPos().x()-rangex.get_min())*X);//TODO change name this is fruit
+						int robotY = (int) ((fruit.getPos().y()-rangey.get_max())*Y);//TODO
+						if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
+						    try {
+						    	if(Graph.Fruits.containsKey(fruit)) {//TODO not needed condition (always true) 
+							    	chosenFruit = fruit;
+							    	System.out.println(fruit.getType());
+							    }
+							} catch (Exception e2) {
+								System.out.println(e2);
+							}
 						}
-					}
-			    }
-			    for (int node : Graph.getNodes().keySet()) {
-					double nodeX = Graph.getNode(node).getLocation().x();
-					double nodeY = Graph.getNode(node).getLocation().y();
-					if (Math.sqrt((nodeX-mouseX)*(nodeX-mouseX)+(nodeY-mouseY)*(nodeY-mouseY)) <= GraphComponent.NODE_RADIUS) {
-					    try {
-					    	if(Graph.getNodes().containsKey(node)) {
-						    	chosenNode = (Node) Graph.getNodes().get(node);
-						    }
-						} catch (Exception e2) {
-							System.out.println(e2);
+				    }
+				    for (int node : Graph.getNodes().keySet()) {
+						double nodeX = Graph.getNode(node).getLocation().x();
+						double nodeY = Graph.getNode(node).getLocation().y();
+						if (Math.sqrt((nodeX-mouseX)*(nodeX-mouseX)+(nodeY-mouseY)*(nodeY-mouseY)) <= GraphComponent.NODE_RADIUS) {
+						    try {
+						    	if(Graph.getNodes().containsKey(node)) {
+							    	chosenNode = (Node) Graph.getNodes().get(node);
+							    }
+							} catch (Exception e2) {
+								System.out.println(e2);
+							}
 						}
-					}
-			    }
-			}
-			if(AddRobot == true) {
+				    }
+				} catch (Exception e2) {}
+//			    if(game.isRunning()) {
+//			    	try {
+//			    		Graph_Algo Algo = new Graph_Algo(Graph);
+//			    		ArrayList<node_data> PathToFruit = (ArrayList<node_data>) Algo.shortestPath(chosenRobot.getSrc(), chosenFruit.getEdge().getSrc());
+//			    		System.out.println(chosenFruit.getEdge().getSrc());
+//			    		for(int i = 1; i<PathToFruit.size(); i++) {
+//			    			game.chooseNextEdge(chosenRobot.getID(), PathToFruit.get(i).getKey());
+//			    			chosenRobot.setPos(Graph.Nodes.get(chosenRobot.getSrc()).getLocation());
+//			    			graphComponent.repaint();
+//			    		}
+//					} catch (Exception e2) {}
+//			    }
+//			    else {
+//			    	System.out.println(game.toString());
+//			    }
+			}//up till now we choose a robot and a fruit
+			if(AddRobot == true) {//not all robots were added yet
 				for (int v : Graph.Nodes.keySet()) {
 			    	int nodex = (int) ((Graph.Nodes.get(v).getLocation().x()-rangex.get_min())*X);
 					int nodey = (int) ((Graph.Nodes.get(v).getLocation().y()-rangey.get_max())*Y);
@@ -398,11 +421,11 @@ public class GraphGUI{
 				}
 			}
 		}
-		public void mouseClicked(MouseEvent e) {
-			
-		}
-		public void mouseMoved(MouseEvent e) {	
-		}
+		public void mouseClicked(MouseEvent e) {}
+		public void mouseMoved(MouseEvent e) {}
+    }
+    public void AddRobot() {
+    	
     }
     private void initializeGraph() {}
 }

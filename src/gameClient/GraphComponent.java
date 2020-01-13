@@ -148,10 +148,13 @@ public class GraphComponent extends JComponent {
 		    }
 	  }
 	  public void paint(Graphics g){
-			paintNodes(g);
-			paintEdges(g);
-			paintRobots(g);
-			paintFruits(g);
+		  try {
+			  paintNodes(g);
+			  paintEdges(g);
+			  paintRobots(g);
+			  paintFruits(g);
+		} catch (Exception e) {}
+			
 	  }
 	  public void saveImage(String name,String type) {
 		  	BufferedImage image = new BufferedImage(getWidth(),getHeight(), BufferedImage.TYPE_3BYTE_BGR);

@@ -1,5 +1,6 @@
 package gameClient;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -9,9 +10,11 @@ import org.json.JSONObject;
 
 import Server.Game_Server;
 import Server.game_service;
+import algorithms.Graph_Algo;
 import dataStructure.DGraph;
 import dataStructure.edge_data;
 import dataStructure.graph;
+import dataStructure.node_data;
 import oop_dataStructure.OOP_DGraph;
 import oop_dataStructure.oop_edge_data;
 import oop_dataStructure.oop_graph;
@@ -33,7 +36,7 @@ import utils.Point3D;
  */
 public class SimpleGameClient {
 	public static void main(String[] a) {
-		//test1();
+		test1(new DGraph(),2);
 		}
 	public static void test1(DGraph gg , int scenario_num) {
 		int idf = 1;
@@ -43,8 +46,8 @@ public class SimpleGameClient {
 		}
 		String g = game.getGraph();
 		gg.init(g);
-//		GraphGUI  gui = new GraphGUI(gg);
-		//gui.execute();
+		GraphGUI  gui = new GraphGUI(gg);
+		gui.execute();
 		String info = game.toString();
 		JSONObject line;
 		try {
@@ -54,10 +57,11 @@ public class SimpleGameClient {
 			System.out.println(info);
 			System.out.println(g);
 			// the list of fruits should be considered in your solution
+			gg.Fruits.clear();
 			Iterator<String> f_iter = game.getFruits().iterator();
 			while(f_iter.hasNext()) {
 				try {
-					System.out.println(f_iter.next());
+					//System.out.println(f_iter.next());
 					gg.addFruit(new Fruit(f_iter.next()));
 				} catch (Exception e) {}
 			}	
@@ -74,13 +78,8 @@ public class SimpleGameClient {
 		game.startGame();
 		while(game.isRunning()) {
 			try {
-				
-				if(idf%2 == 0) {
-					Thread.sleep(49);
-					//gui.graphComponent.repaint();
-				}
-				idf++;
-				moveRobots(game, gg);
+				gui.graphComponent.repaint();
+				moveRobots(game, gg, gui);
 				
 			} catch (Exception e) {	}
 			
@@ -95,8 +94,9 @@ public class SimpleGameClient {
 	 * @param gg
 	 * @param log
 	 */
-	private static void moveRobots(game_service game, DGraph gg) {
+	private static void moveRobots(game_service game, DGraph gg, GraphGUI GUI) {
 		List<String> log = game.move();
+		int idf = 1;
 		if(log!=null) {
 			long t = game.timeToEnd();
 			for(int i=0;i<log.size();i++) {
@@ -109,18 +109,21 @@ public class SimpleGameClient {
 					int dest = ttt.getInt("dest");
 					if(dest == -1) {
 						try {
-							dest = nextNode(gg, src);
-							game.chooseNextEdge(rid, dest);
-							gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
+							ArrayList<node_data> path = nextNode(gg, src, GUI);
+							for(node_data node : path) {
+								game.chooseNextEdge(rid, node.getKey());
+								gg.Robots.get(rid).setPos(new Point3D(node.getLocation()));
+								GUI.graphComponent.repaint();
+							}
 							try {
 								Iterator<String> f_iter = game.getFruits().iterator();
 								gg.Fruits.clear();
 								while(f_iter.hasNext()) {
 									gg.addFruit(new Fruit(f_iter.next()));
 								}
-							} catch (Exception e) {System.out.println(e);}
+							} catch (Exception e) {System.out.println();}
 						}
-					catch (Exception e) {System.out.println(e);}
+					catch (Exception e) {System.out.println();}
 					}
 				} 
 				catch (JSONException e) {e.printStackTrace();}
@@ -133,15 +136,17 @@ public class SimpleGameClient {
 	 * @param src
 	 * @return
 	 */
-	private static int nextNode(graph g, int src) {
-		int ans = -1;
-		Collection<edge_data> ee = g.getE(src);
-		Iterator<edge_data> itr = ee.iterator();
-		int s = ee.size();
-		int r = (int)(Math.random()*s);
-		int i=0;
-		while(i<r) {itr.next();i++;}
-		ans = itr.next().getDest();
+	private static ArrayList<node_data> nextNode(graph g, int src, GraphGUI GUI) {
+		ArrayList<node_data> ans = null ;
+		Graph_Algo Algo = new Graph_Algo(g);
+		try {
+			ans = (ArrayList<node_data>) Algo.shortestPath(GUI.chosenRobot.getSrc(), GUI.chosenFruit.getEdge().getSrc());
+			ans.add(g.getNode(GUI.chosenFruit.getEdge().getDest()));
+		} catch (Exception e) {}
+		if(GUI.chosenRobot != null && GUI.chosenFruit != null) {
+			GUI.chosenRobot = null;
+			GUI.chosenFruit = null;
+		}
 		return ans;
 	}
 }
