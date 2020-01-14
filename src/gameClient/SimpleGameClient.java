@@ -1,9 +1,13 @@
 package gameClient;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,12 +38,11 @@ import utils.Point3D;
  * 10. prints the game results (after "game over"): (line 63)
  * @author boaz.benmoshe
  */
-public class SimpleGameClient {
+public class SimpleGameClient extends Thread{
 	public static void main(String[] a) {
 		test1(new DGraph(),2);
 		}
 	public static void test1(DGraph gg , int scenario_num) {
-		int idf = 1;
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		for(String r: game.getRobots()) {
 			System.out.println(r);
@@ -61,11 +64,10 @@ public class SimpleGameClient {
 			Iterator<String> f_iter = game.getFruits().iterator();
 			while(f_iter.hasNext()) {
 				try {
-					//System.out.println(f_iter.next());
 					gg.addFruit(new Fruit(f_iter.next()));
 				} catch (Exception e) {}
 			}	
-			int src_node =9;// arbitrary node, you should start at one of the fruits
+			int src_node =0;// arbitrary node, you should start at one of the fruits
 			for(int a = 0;a<rs;a++) {
 				try {
 					game.addRobot(src_node+a);
@@ -77,11 +79,8 @@ public class SimpleGameClient {
 		catch (JSONException e) {e.printStackTrace();}
 		game.startGame();
 		while(game.isRunning()) {
-			try {
-				gui.graphComponent.repaint();
-				moveRobots(game, gg, gui);
-				
-			} catch (Exception e) {	}
+			gui.graphComponent.repaint();
+			moveRobots(game, gg, gui);
 			
 		}
 		String results = game.toString();
@@ -94,9 +93,8 @@ public class SimpleGameClient {
 	 * @param gg
 	 * @param log
 	 */
-	private static void moveRobots(game_service game, DGraph gg, GraphGUI GUI) {
+	private static void moveRobots(game_service game, DGraph gg, GraphGUI gui) {
 		List<String> log = game.move();
-		int idf = 1;
 		if(log!=null) {
 			long t = game.timeToEnd();
 			for(int i=0;i<log.size();i++) {
@@ -107,23 +105,22 @@ public class SimpleGameClient {
 					int rid = ttt.getInt("id");
 					int src = ttt.getInt("src");
 					int dest = ttt.getInt("dest");
-					if(dest == -1) {
-						try {
-							ArrayList<node_data> path = nextNode(gg, src, GUI);
-							for(node_data node : path) {
-								game.chooseNextEdge(rid, node.getKey());
-								gg.Robots.get(rid).setPos(new Point3D(node.getLocation()));
-								GUI.graphComponent.repaint();
-							}
+					if(dest==-1) {	
+						dest = nextNode(gg, src, gui);
+						game.chooseNextEdge(rid, dest);
+						gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
+						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
+						System.out.println(ttt);
+						gg.Fruits.clear();
+						Iterator<String> f_iter = game.getFruits().iterator();
+						while(f_iter.hasNext()) {
 							try {
-								Iterator<String> f_iter = game.getFruits().iterator();
-								gg.Fruits.clear();
-								while(f_iter.hasNext()) {
-									gg.addFruit(new Fruit(f_iter.next()));
-								}
-							} catch (Exception e) {System.out.println();}
-						}
-					catch (Exception e) {System.out.println();}
+								gg.addFruit(new Fruit(f_iter.next()));
+							} catch (Exception e) {}
+						}	
+					}
+					else {
+						gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
 					}
 				} 
 				catch (JSONException e) {e.printStackTrace();}
@@ -136,17 +133,18 @@ public class SimpleGameClient {
 	 * @param src
 	 * @return
 	 */
-	private static ArrayList<node_data> nextNode(graph g, int src, GraphGUI GUI) {
-		ArrayList<node_data> ans = null ;
-		Graph_Algo Algo = new Graph_Algo(g);
-		try {
-			ans = (ArrayList<node_data>) Algo.shortestPath(GUI.chosenRobot.getSrc(), GUI.chosenFruit.getEdge().getSrc());
-			ans.add(g.getNode(GUI.chosenFruit.getEdge().getDest()));
-		} catch (Exception e) {}
-		if(GUI.chosenRobot != null && GUI.chosenFruit != null) {
-			GUI.chosenRobot = null;
-			GUI.chosenFruit = null;
-		}
+	private static int nextNode(DGraph g, int src, GraphGUI gui) {
+		int ans = -1;
+		Collection<edge_data> ee = g.getE(src);
+		Iterator<edge_data> itr = ee.iterator();
+		int s = ee.size();
+		int r = (int)(Math.random()*s);
+		int i=0;
+		while(i<r) {itr.next();i++;}
+		ans = itr.next().getDest();
 		return ans;
+	}
+	public void repaint(GraphGUI gui) {
+		gui.graphComponent.repaint();
 	}
 }

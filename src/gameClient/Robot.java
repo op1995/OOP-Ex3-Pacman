@@ -4,13 +4,14 @@ import org.json.JSONObject;
 
 import dataStructure.*;
 import utils.Point3D;
-public class Robot {
+public class Robot extends Thread{
 	private int id;
 	private double value; // Gained value of acquired fruits.
 	private int src; //current node (location)
 	private int dest; //current final node to get to
 	private double speed;
 	private Point3D position; // based on pos.
+	private boolean isEating;
 	public Robot(String Json) {
 		 try {
 			 	JSONObject g = new JSONObject(Json);
@@ -21,6 +22,7 @@ public class Robot {
 	            this.src = g.getJSONObject("Robot").getInt("src");
 	            this.dest = g.getJSONObject("Robot").getInt("dest");
 	            this.speed = g.getJSONObject("Robot").getDouble("speed");
+	            this.isEating = false;
 	        } catch (Exception e) {System.out.println(e);}
 	}
 	public int getID() {
@@ -55,5 +57,11 @@ public class Robot {
 	}
 	public double getValue() {
 		return this.value;
+	}
+	public void setisEating(boolean is) {
+		this.isEating = is;
+	}
+	public boolean getisEating() {
+		return this.isEating;
 	}
 }

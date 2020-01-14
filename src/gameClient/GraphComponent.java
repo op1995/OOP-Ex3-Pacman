@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import javax.imageio.ImageIO;
@@ -28,7 +29,7 @@ import utils.Range;
  *  A component that draws a picture of a graph.
  *  @author Ibrahem Chahine, Ofir Peller.
  */
-public class GraphComponent extends JComponent {
+public class GraphComponent extends JComponent{
 	  private static final long serialVersionUID = -4822415017845138079L;
 	
 	 /** The radius of the circle to draw for a node. */
@@ -149,10 +150,10 @@ public class GraphComponent extends JComponent {
 	  }
 	  public void paint(Graphics g){
 		  try {
-			  paintNodes(g);
 			  paintEdges(g);
-			  paintRobots(g);
+			  paintNodes(g);
 			  paintFruits(g);
+			  paintRobots(g);
 		} catch (Exception e) {}
 			
 	  }

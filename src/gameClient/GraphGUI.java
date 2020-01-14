@@ -60,6 +60,7 @@ public class GraphGUI{
   	private boolean AddRobot;
   	private game_service game;
   	boolean a = false;
+  	Thread thread;
   	int scenario_num = 0;
     private static boolean windowsOn = false;
     /**
@@ -226,7 +227,7 @@ public class GraphGUI{
 	// creating and showing this application's GUI.
     	javax.swing.SwingUtilities.invokeLater(new Runnable() {
     		public void run() {
-    			try {
+				try {
     				if(windowsOn) {
     					frame.setVisible(false);
     					createAndShowGUI();
@@ -236,7 +237,6 @@ public class GraphGUI{
     					createAndShowGUI();
     				}
 				} catch (Exception e) {System.out.println(e);}
-    			
     		}
 	    });
     }

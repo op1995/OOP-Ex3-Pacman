@@ -1,7 +1,13 @@
 package gameClient;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import Server.game_service;
+import algorithms.Graph_Algo;
 import dataStructure.DGraph;
 import dataStructure.Edge;
+import dataStructure.node_data;
 import utils.Point3D;
 
 public class Robot_Algo {
@@ -61,6 +67,8 @@ public class Robot_Algo {
 	/*
 	 * This method find the Edge of a given fruit.
 	 * @param f The Given Fruit.
+	 * @param u A source of an edge in this graph.
+	 * @param v A destination of an edge in this graph.
 	 */
 	public Edge findEdge(Fruit f){
 		for(int u : this.Graph.Edges.keySet()) {
@@ -72,4 +80,39 @@ public class Robot_Algo {
 		}
 		return null;
 	}
+	/*
+	 * 
+	 */
+	public Fruit getClosestFruit(Robot robot, game_service game, DGraph g){
+		if(!robot.getisEating()) {
+			robot.setisEating(true);
+			g.init(game.getGraph());
+			Graph_Algo Algo = new Graph_Algo(g);
+			double minDest = Double.MAX_VALUE;
+			double dist = 0;
+			try {
+				Fruit minDestFruit = new Fruit();
+				for(Fruit f1 : g.Fruits.keySet()) {
+					Fruit f = f1;
+					boolean fbool = !f.getisAlive();
+						if(fbool) {
+						double weight = f.getEdge().getWeight();
+						System.out.println("im here");
+						double pathdist = Algo.shortestPathDist(robot.getSrc(), f.getEdge().getSrc());
+						System.out.println(pathdist);
+						System.out.println(weight);
+						dist = (pathdist+weight);
+						if(dist <= minDest) {
+							minDestFruit = f1;
+						}
+					}
+				}
+				return minDestFruit;
+			} catch (Exception e) {
+				//System.out.println(e);
+			}
+		}
+		return null;
+	}
 }
+

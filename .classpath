@@ -8,12 +8,8 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-12-openjdk-amd64">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="JSON"/>
-	<classpathentry kind="lib" path="/home/ofir/eclipse-workspace/OOP-Ex3-Pacman/lib/GameServer_v0.27.jar"/>
+	<classpathentry kind="lib" path="C:/Users/shahe/git/OOP-Ex3-Pacman/lib/GameServer_v0.27.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
