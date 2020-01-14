@@ -86,7 +86,6 @@ public class Robot_Algo {
 	public Fruit getClosestFruit(Robot robot, game_service game, DGraph g){
 		if(!robot.getisEating()) {
 			robot.setisEating(true);
-			g.init(game.getGraph());
 			Graph_Algo Algo = new Graph_Algo(g);
 			double minDest = Double.MAX_VALUE;
 			double dist = 0;
@@ -97,13 +96,14 @@ public class Robot_Algo {
 					boolean fbool = !f.getisAlive();
 						if(fbool) {
 						double weight = f.getEdge().getWeight();
-						System.out.println("im here");
+//						System.out.println("im here");
 						double pathdist = Algo.shortestPathDist(robot.getSrc(), f.getEdge().getSrc());
-						System.out.println(pathdist);
-						System.out.println(weight);
+//						System.out.println(pathdist);
+//						System.out.println(weight);
 						dist = (pathdist+weight);
-						if(dist <= minDest) {
+						if(dist < minDest) {
 							minDestFruit = f1;
+							minDest = dist;
 						}
 					}
 				}

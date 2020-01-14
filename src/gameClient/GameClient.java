@@ -44,6 +44,7 @@ public class GameClient{
 		test1(new DGraph(),2);
 	}
 	public static void test1(DGraph gg , int scenario_num) {
+		int i=0;
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		for(String r: game.getRobots()) {
 			System.out.println(r);
@@ -80,12 +81,23 @@ public class GameClient{
 				gg.Robots.get(robot).setisEating(false);
 			}
 		}
-		catch (JSONException e) {e.printStackTrace();}
+		catch (JSONException e) {}
 		game.startGame();
 		while(game.isRunning()) {
-			gui.graphComponent.repaint();
-			moveRobots(game, gg, gui);
+			try {
+				if(i%2==0){
+					Thread.sleep(49);
+					moveRobots(game, gg, gui);
+					gui.graphComponent.repaint();
+
+				}
+				i++;
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			
 		}
+		
 		String results = game.toString();
 		System.out.println("Game Over: "+results);
 	}
@@ -98,6 +110,7 @@ public class GameClient{
 	 */
 	private static void moveRobots(game_service game, DGraph gg, GraphGUI gui) {
 		List<String> log = game.move();
+//		System.out.println(log.toString());
 		if(log!=null) {
 			long t = game.timeToEnd();
 			for(int i=0;i<log.size();i++) {
@@ -108,45 +121,35 @@ public class GameClient{
 					int rid = ttt.getInt("id");
 					int src = ttt.getInt("src");
 					int dest = ttt.getInt("dest");
-					int grade = 0;
 					ArrayList<node_data> PathToFruit = nextNode(game, rid, gg);
-					Iterator<node_data> r_iter = PathToFruit.iterator();
+					System.out.println("path"+PathToFruit.toString());
 					if(PathToFruit.size()>=2) {
-						while(r_iter.hasNext()) {
+						int j = 0;
+						for(node_data node : PathToFruit){	
 							if(dest==-1) {	
-								dest = r_iter.next().getKey();
-								game.chooseNextEdge(rid, dest);
-								gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
-								System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
-								System.out.println(ttt);
 								try {
-									String info = game.toString();
-									JSONObject line2;
-									line2 = new JSONObject(info);
-									JSONObject ttt2 = line2.getJSONObject("GameServer");
-									if(ttt2.getInt("grade") > grade) {
-										gg.Fruits.clear();
-										Iterator<String> f_iter = game.getFruits().iterator();
-										while(f_iter.hasNext()) {
-											try {
-												Fruit f = new Fruit(f_iter.next());
-												f.setisAlive(false);
-												gg.addFruit(f);
-											} catch (Exception e) {}
-										}
+									dest = node.getKey();
+									System.out.println("dest = " + dest);
+									game.chooseNextEdge(rid, dest);
+									gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
+									System.out.println("line 134 = " + log.get(i));
+									gg.Robots.get(rid).setSrc(dest);
+									gg.Fruits.clear();
+									Iterator<String> f_iter = game.getFruits().iterator();
+									while(f_iter.hasNext()) {
+										try {
+											gg.addFruit(new Fruit(f_iter.next()));
+										} catch (Exception e) {}
 									}
 								}catch (Exception e) {}
-//								dest=-1;
 							}
 							else {
 								gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
-//								dest=-1;
 							}
-//							dest=-1;
+							dest=-1;
 						}
 					}
-					gg.Robots.get(rid).setisEating(false);
-//					dest=-1;
+					//gg.Robots.get(rid).setisEating(false);
 				} 
 				catch (JSONException e) {e.printStackTrace();
 				}
@@ -162,6 +165,7 @@ public class GameClient{
 	private static ArrayList<node_data> nextNode(game_service game, int src, DGraph gg) {
 		ArrayList<node_data> Path = new ArrayList<node_data>();
 		try {
+			System.out.println(gg.Robots.get(src).getSrc());
 			gg.Robots.get(src).setisEating(false);
 			Robot_Algo RobotAlgo = new Robot_Algo(gg);
 			Fruit f = RobotAlgo.getClosestFruit(gg.Robots.get(src), game, gg);

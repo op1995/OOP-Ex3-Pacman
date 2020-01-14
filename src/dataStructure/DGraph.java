@@ -269,6 +269,7 @@ public class DGraph implements graph, Serializable{
 	public void addFruit(Fruit f) {
 		Robot_Algo R_Algo = new Robot_Algo(this);
 		Edge edge = R_Algo.findEdge(f);
+		f.setisAlive(false);
 		if(edge == null ) {
 			throw new RuntimeException("The given fruit doesn't belong to any Edge.");
 		}

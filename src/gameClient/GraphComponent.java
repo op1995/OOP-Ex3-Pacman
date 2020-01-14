@@ -79,6 +79,8 @@ public class GraphComponent extends JComponent{
 				int y0=(int) ((graph.getNodes().get(v).getLocation().y()-rangey.get_max())*Y);
 				g.setColor(Color.yellow);
 				g.fillOval(x0 - NODE_RADIUS, y0 - NODE_RADIUS, NODE_DIAMETER, NODE_DIAMETER);
+				g.setColor(Color.black);
+				g.drawString(String.valueOf(v), x0-NODE_RADIUS, y0-NODE_RADIUS);
 			}
 	  }
 	  public void paintEdges(Graphics g) {
