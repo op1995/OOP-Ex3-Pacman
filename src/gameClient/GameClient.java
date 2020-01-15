@@ -40,8 +40,7 @@ import utils.Point3D;
  */
 public class GameClient{
 	public static void main(String[] a) {
-		
-		test1(new DGraph(),2);
+		test1(new DGraph(),10);
 	}
 	public static void test1(DGraph gg , int scenario_num) {
 		int i=0;
@@ -110,7 +109,6 @@ public class GameClient{
 	 */
 	private static void moveRobots(game_service game, DGraph gg, GraphGUI gui) {
 		List<String> log = game.move();
-//		System.out.println(log.toString());
 		if(log!=null) {
 			long t = game.timeToEnd();
 			for(int i=0;i<log.size();i++) {
@@ -121,40 +119,31 @@ public class GameClient{
 					int rid = ttt.getInt("id");
 					int src = ttt.getInt("src");
 					int dest = ttt.getInt("dest");
-					ArrayList<node_data> PathToFruit = nextNode(game, rid, gg);
-					System.out.println("path"+PathToFruit.toString());
-					if(PathToFruit.size()>=2) {
-						int j = 0;
-						for(node_data node : PathToFruit){	
-							if(dest==-1) {	
-								try {
-									dest = node.getKey();
-									System.out.println("dest = " + dest);
-									game.chooseNextEdge(rid, dest);
-									gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
-									System.out.println("line 134 = " + log.get(i));
-									gg.Robots.get(rid).setSrc(dest);
-									gg.Fruits.clear();
-									Iterator<String> f_iter = game.getFruits().iterator();
-									while(f_iter.hasNext()) {
-										try {
-											gg.addFruit(new Fruit(f_iter.next()));
-										} catch (Exception e) {}
-									}
-								}catch (Exception e) {}
-							}
-							else {
-								gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
-							}
-							dest=-1;
-						}
+					if(dest==-1) {	
+						dest = nextNode(game,rid,gg);
+						game.chooseNextEdge(rid, dest);
+						gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
+						gg.Robots.get(rid).setSrc(dest);
+						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
+						System.out.println(ttt);
+						gg.Fruits.clear();
+						Iterator<String> f_iter = game.getFruits().iterator();
+						while(f_iter.hasNext()) {
+							try {
+								Fruit f = new Fruit(f_iter.next());
+								f.setisAlive(false);
+								gg.addFruit(f);
+							} catch (Exception e) {}
+						}	
 					}
-					//gg.Robots.get(rid).setisEating(false);
+					else {
+						gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
+					}
 				} 
-				catch (JSONException e) {e.printStackTrace();
-				}
+				catch (JSONException e) {e.printStackTrace();}
 			}
 		}
+		
 	}
 	/**
 	 * a very simple random walk implementation!
@@ -162,7 +151,8 @@ public class GameClient{
 	 * @param src
 	 * @return
 	 */
-	private static ArrayList<node_data> nextNode(game_service game, int src, DGraph gg) {
+	private static int nextNode(game_service game, int src, DGraph gg) {
+		int ans = -1;
 		ArrayList<node_data> Path = new ArrayList<node_data>();
 		try {
 			System.out.println(gg.Robots.get(src).getSrc());
@@ -172,10 +162,63 @@ public class GameClient{
 			Graph_Algo Algo =  new Graph_Algo(gg);
 			Path = (ArrayList<node_data>) Algo.shortestPath(gg.Robots.get(src).getSrc(), f.getEdge().getSrc());
 			Path.add(gg.getNodes().get(f.getEdge().getDest()));
-			return Path;
+			gg.Robots.get(src).setisEating(true);
+			ans=Path.get(1).getKey();
+			return ans;
 		} catch (Exception e) {}
 		Path.add(gg.getNodes().get(gg.Robots.get(src).getSrc()));
 		System.out.println(Path.toString());
-		return Path;
+		return ans;
 	}
+//	List<String> log = game.move();
+//	if(log!=null) {
+//		long t = game.timeToEnd();
+//		for(int i=0;i<log.size();i++) {
+//			String robot_json = log.get(i);
+//			try {
+//				JSONObject line = new JSONObject(robot_json);
+//				JSONObject ttt = line.getJSONObject("Robot");
+//				int rid = ttt.getInt("id");
+//				int src = ttt.getInt("src");
+//				int dest = ttt.getInt("dest");
+//				ArrayList<node_data> PathToFruit = nextNode(game, rid, gg);
+//				System.out.println("path"+PathToFruit.toString());
+//				Iterator<node_data> path = PathToFruit.iterator();
+//				if(PathToFruit.size()>=2) {
+//					if(dest==-1) {
+//						while(path.hasNext()){	
+////							if(dest==-1) {	
+//								try {
+//									dest = path.next().getKey();
+//									System.out.println("dest = " + dest);
+//									game.chooseNextEdge(rid, dest);
+//									gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
+//									System.out.println("line 134 = " + log.get(i));
+//									gg.Robots.get(rid).setSrc(dest);
+//									gg.Robots.get(rid).setDest(-1);
+//									gg.Fruits.clear();
+//									Iterator<String> f_iter = game.getFruits().iterator();
+//									while(f_iter.hasNext()) {
+//										try {
+//											gg.addFruit(new Fruit(f_iter.next()));
+//										} catch (Exception e) {}
+//									}
+//								}catch (Exception e) {}
+////							}
+////							else {
+////								gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
+////							}
+////							dest=gg.Robots.get(rid).getDest();
+//						}
+//					}
+//					else {
+//						gg.Robots.get(rid).setPos(new Point3D(ttt.getString("pos")));
+//						dest=gg.Robots.get(rid).getDest();
+//					}
+//				}
+//			} 
+//			catch (JSONException e) {e.printStackTrace();
+//			}
+//		}
+//	}
 }

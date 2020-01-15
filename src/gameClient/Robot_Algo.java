@@ -96,10 +96,7 @@ public class Robot_Algo {
 					boolean fbool = !f.getisAlive();
 						if(fbool) {
 						double weight = f.getEdge().getWeight();
-//						System.out.println("im here");
 						double pathdist = Algo.shortestPathDist(robot.getSrc(), f.getEdge().getSrc());
-//						System.out.println(pathdist);
-//						System.out.println(weight);
 						dist = (pathdist+weight);
 						if(dist < minDest) {
 							minDestFruit = f1;
