@@ -39,7 +39,7 @@ public class GraphGUI{
     GraphComponent graphComponent; 
     private DGraph Graph;
     /** The window */
-    private static JFrame frame;
+    public static JFrame frame;
     /** The node last selected by the user. */
     private Node chosenNode;
     /** The robot last selected by the user. */

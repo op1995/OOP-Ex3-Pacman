@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.JOptionPane;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,7 +43,7 @@ import utils.Point3D;
  */
 public class GameClient{
 	public static void main(String[] a) {
-		test1(new DGraph(),17);
+		test1(new DGraph(),0);
 	}
 	public static void test1(DGraph gameGraph , int scenario_num) {
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
@@ -61,7 +63,7 @@ public class GameClient{
 			System.out.println("gameToString = " + gameToString);
 			System.out.println("gameGraphString = " + gameGraphString);
 			// the list of fruits should be considered in your solution
-//			gameGraph.Fruits.clear(); //not needed, the Fruits of the graph is empty
+			gameGraph.Fruits.clear();
 			Iterator<String> fruits_iterator = game.getFruits().iterator();
 			while(fruits_iterator.hasNext()) {
 				try {
@@ -74,14 +76,14 @@ public class GameClient{
 			for(int a = 0;a<amoutOfRobotsInGame;a++) {
 				try {
 					game.addRobot(src_node+a);
-					System.out.println("game.getRobots() = " + game.getRobots());
+//					System.out.println("game.getRobots() = " + game.getRobots());
 					gameGraph.addRobot(new Robot(game.getRobots().get(a)));
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
 			}//end add robots at random nodes.
 			for(int robot : gameGraph.Robots.keySet()) {
-				gameGraph.Robots.get(robot).setisEating(false);
+				gameGraph.Robots.get(robot).setisEating(false); //initing the game, so all the robots should be set to not eating mode
 			}
 		}
 		catch (JSONException e) {
@@ -100,6 +102,16 @@ public class GameClient{
 		}
 		
 		String results = game.toString();
+		String finalGrade = "Game Over";
+		try {
+			JSONObject GameInfoFromJson = new JSONObject(game.toString());
+			finalGrade = String.valueOf(GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
+			finalGrade = "Game Over. Score - " + finalGrade;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		JOptionPane.showMessageDialog(GraphGUI.frame, finalGrade);
 		System.out.println("Game Over: "+results);
 	}
 	/** 
@@ -130,7 +142,7 @@ public class GameClient{
 						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
 						System.out.println(robotInfoFromJson);
 						JSONObject GameInfoFromJson = new JSONObject(game.toString());
-						System.out.println(GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
+						System.out.println("Our Current grade is = " + GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
 						if(grade != GameInfoFromJson.getJSONObject("GameServer").getInt("grade")) {
 							grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
 							gg.Fruits.clear();
@@ -173,8 +185,8 @@ public class GameClient{
 			System.out.println("im here 2");
 			
 			Fruit f = RobotAlgo.getClosestFruit(gg.Robots.get(robotId).getID(), game);
-			Edge edge = RobotAlgo.findEdge(f);
-			System.out.println(edge.getSrc());
+			Edge edge = RobotAlgo.findEdge(f); //we should change this to get fruit's edge. This was tried but didn't always work. check in to this.
+//			System.out.println(edge.getSrc());
 			f.setEdge(edge);
 			if(f.getEdge() != null) {
 				System.out.println(gg.Fruits.toString());
