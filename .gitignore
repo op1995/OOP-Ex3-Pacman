@@ -139,6 +139,8 @@ $RECYCLE.BIN/
 
 *.class
 *.classpath
+*.obj
 bin/
+
 
 # End of https://www.gitignore.io/api/java,linux,windows,eclipse
