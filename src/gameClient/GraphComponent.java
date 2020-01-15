@@ -126,7 +126,14 @@ public class GraphComponent extends JComponent{
 					BufferedImage image = ImageIO.read(new File("pics\\pacman1.gif"));
 					g.drawImage(image.getScaledInstance(NODE_RADIUS*5, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
 					g.setColor(Color.BLACK);
-				} catch (IOException e) {System.out.println(e);}
+				} catch (IOException e) {
+					try {
+//						System.out.println("Couldn't find picture pacman1.gif. Trying linux path instead.");
+						BufferedImage image = ImageIO.read(new File("pics/pacman1.gif"));
+						g.drawImage(image.getScaledInstance(NODE_RADIUS*5, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
+						g.setColor(Color.BLACK);
+					}catch (IOException f) {System.out.println(f);}
+				}
 			}
 			
 		}
@@ -136,20 +143,41 @@ public class GraphComponent extends JComponent{
 		  for(Fruit f : this.graph.Fruits.keySet()) {
 		    	int x = (int) ((f.getPos().x()-rangex.get_min())*X);
 				int y = (int) ((f.getPos().y()-rangey.get_max())*Y);
-				try {
-					if(f.getType() == -1) {
+				if(f.getType() == -1) {
+					try {
 						BufferedImage image = ImageIO.read(new File("pics\\orange.gif"));
 						g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
 						g.setColor(Color.BLACK);
 					}
-					else {
+					catch (IOException e) {
+						try {
+//							System.out.println("Couldn't find picture orange.gif. Trying linux path instead.");
+							BufferedImage image = ImageIO.read(new File("pics/orange.gif"));
+							g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
+							g.setColor(Color.BLACK);
+						}
+						catch (IOException f1) {System.out.println(f1);}
+					}
+				}
+				else {
+					try {
 						BufferedImage image = ImageIO.read(new File("pics\\apple.gif"));
 						g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
 						g.setColor(Color.BLACK);
 					}
-				} catch (IOException e) {System.out.println(e);}
-		    }
-	  }
+					catch (IOException e) {
+						try {
+//							System.out.println("Couldn't find picture apple.gif. Trying linux path instead.");
+							BufferedImage image = ImageIO.read(new File("pics/apple.gif"));
+							g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
+							g.setColor(Color.BLACK);
+						}
+						catch (IOException f1) {System.out.println(f1);}
+					}
+				}
+
+		}
+	}
 	  public void paint(Graphics g){
 		  try {
 			  paintEdges(g);
