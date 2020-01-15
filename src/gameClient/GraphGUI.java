@@ -385,21 +385,6 @@ public class GraphGUI{
 						}
 				    }
 				} catch (Exception e2) {}
-//			    if(game.isRunning()) {
-//			    	try {
-//			    		Graph_Algo Algo = new Graph_Algo(Graph);
-//			    		ArrayList<node_data> PathToFruit = (ArrayList<node_data>) Algo.shortestPath(chosenRobot.getSrc(), chosenFruit.getEdge().getSrc());
-//			    		System.out.println(chosenFruit.getEdge().getSrc());
-//			    		for(int i = 1; i<PathToFruit.size(); i++) {
-//			    			game.chooseNextEdge(chosenRobot.getID(), PathToFruit.get(i).getKey());
-//			    			chosenRobot.setPos(Graph.Nodes.get(chosenRobot.getSrc()).getLocation());
-//			    			graphComponent.repaint();
-//			    		}
-//					} catch (Exception e2) {}
-//			    }
-//			    else {
-//			    	System.out.println(game.toString());
-//			    }
 			}//up till now we choose a robot and a fruit
 			if(AddRobot == true) {//not all robots were added yet
 				for (int v : Graph.Nodes.keySet()) {

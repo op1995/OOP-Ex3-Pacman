@@ -11,7 +11,7 @@ import dataStructure.node_data;
 import utils.Point3D;
 
 public class Robot_Algo {
-	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS = EPS2;
+	public static final double EPS1 = 0.01, EPS2=EPS1*EPS1, EPS = EPS2;
 	private DGraph Graph;
 	/*
 	 * A constructor.
@@ -73,8 +73,10 @@ public class Robot_Algo {
 	public Edge findEdge(Fruit f){
 		for(int u : this.Graph.Edges.keySet()) {
 			for(int v : this.Graph.Edges.get(u).keySet()) {
-				if(isOnEdge(f.getPos(), this.Graph.Edges.get(u).get(v), f.getType(), Graph)) {
-					return this.Graph.Edges.get(u).get(v);
+				boolean is = isOnEdge(f.getPos(), this.Graph.Edges.get(u).get(v), f.getType(), Graph);
+				if(is) {
+					Edge edge = this.Graph.Edges.get(u).get(v);
+					return edge;
 				}
 			}
 		}
@@ -83,20 +85,21 @@ public class Robot_Algo {
 	/*
 	 * 
 	 */
-	public Fruit getClosestFruit(Robot robot, game_service game, DGraph g){
-		if(!robot.getisEating()) {
-			robot.setisEating(true);
-			Graph_Algo Algo = new Graph_Algo(g);
+	public Fruit getClosestFruit(int robot, game_service game){
+		if(!this.Graph.Robots.get(robot).getisEating()) {
+			this.Graph.Robots.get(robot).setisEating(true);
+			System.out.println();
+			Graph_Algo Algo = new Graph_Algo(this.Graph);
 			double minDest = Double.MAX_VALUE;
 			double dist = 0;
 			try {
 				Fruit minDestFruit = new Fruit();
-				for(Fruit f1 : g.Fruits.keySet()) {
+				for(Fruit f1 : this.Graph.Fruits.keySet()) {
 					Fruit f = f1;
 					boolean fbool = !f.getisAlive();
-						if(fbool) {
+					if(fbool) {
 						double weight = f.getEdge().getWeight();
-						double pathdist = Algo.shortestPathDist(robot.getSrc(), f.getEdge().getSrc());
+						double pathdist = Algo.shortestPathDist(this.Graph.Robots.get(robot).getSrc(), f.getEdge().getSrc());
 						dist = (pathdist+weight);
 						if(dist < minDest) {
 							minDestFruit = f1;
@@ -104,6 +107,7 @@ public class Robot_Algo {
 						}
 					}
 				}
+				minDestFruit.setEdge(findEdge(minDestFruit));
 				return minDestFruit;
 			} catch (Exception e) {
 				//System.out.println(e);

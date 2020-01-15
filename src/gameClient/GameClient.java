@@ -16,6 +16,7 @@ import Server.Game_Server;
 import Server.game_service;
 import algorithms.Graph_Algo;
 import dataStructure.DGraph;
+import dataStructure.Edge;
 import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
@@ -40,10 +41,9 @@ import utils.Point3D;
  */
 public class GameClient{
 	public static void main(String[] a) {
-		test1(new DGraph(),10);
+		test1(new DGraph(),17);
 	}
 	public static void test1(DGraph gameGraph , int scenario_num) {
-		int i=0;
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		for(String gotRobot: game.getRobots()) {
 			System.out.println(gotRobot);
@@ -96,22 +96,7 @@ public class GameClient{
 				moveRobots(game, gameGraph, gui);
 				gui.graphComponent.repaint();
 				lastUpdateTime = System.currentTimeMillis();
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-						
-//			try {
-//				if(i%2==0){
-//					Thread.sleep(49);
-//					moveRobots(game, gg, gui);
-//					gui.graphComponent.repaint();
-//
-//				}
-//				i++;
-//			} catch (Exception e) {
-//				// TODO: handle exception
-//			}
-			
+			} catch (Exception e) {}
 		}
 		
 		String results = game.toString();
@@ -126,6 +111,7 @@ public class GameClient{
 	 */
 	private static void moveRobots(game_service game, DGraph gg, GraphGUI gui) {
 		List<String> log = game.move();
+		int grade = 0;
 		if(log!=null) {
 			long t = game.timeToEnd();
 			for(int i=0;i<log.size();i++) {
@@ -143,20 +129,26 @@ public class GameClient{
 						gg.Robots.get(robotId).setSrc(dest);
 						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
 						System.out.println(robotInfoFromJson);
-						gg.Fruits.clear();
-						Iterator<String> f_iter = game.getFruits().iterator();
-						while(f_iter.hasNext()) {
-							try {
-								Fruit f = new Fruit(f_iter.next());
-								f.setisAlive(false);
-								gg.addFruit(f);
-							} catch (Exception e) {}
-						}	
+						JSONObject GameInfoFromJson = new JSONObject(game.toString());
+						System.out.println(GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
+						if(grade != GameInfoFromJson.getJSONObject("GameServer").getInt("grade")) {
+							grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
+							gg.Fruits.clear();
+							System.out.println("fruits :"+game.getFruits().toString());
+							Iterator<String> f_iter = game.getFruits().iterator();
+							while(f_iter.hasNext()) {
+								try {
+									Fruit f = new Fruit(f_iter.next());
+									gg.addFruit(f);
+								} catch (Exception e) {}
+							}
+						}		
 					}
 					else {
 						gg.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
+						gg.Robots.get(robotId).setDest(dest);;
 					}
-					System.out.println("log.grade = " + game.toString());
+//					System.out.println("log.grade = " + game.toString());
 				} 
 				catch (JSONException e) {e.printStackTrace();}
 			}
@@ -170,24 +162,84 @@ public class GameClient{
 	 * @return
 	 */
 	private static int nextNode(game_service game, int robotId, DGraph gg) {
-		int ans = -1;
+		int ans = gg.Robots.get(robotId).getDest();
 		ArrayList<node_data> Path = new ArrayList<node_data>();
+		gg.init(game.getGraph());
 		try {
 			System.out.println(gg.Robots.get(robotId).getSrc());
+			System.out.println("im here 1");
 			gg.Robots.get(robotId).setisEating(false);
 			Robot_Algo RobotAlgo = new Robot_Algo(gg);
-			Fruit f = RobotAlgo.getClosestFruit(gg.Robots.get(robotId), game, gg);
-			Graph_Algo Algo =  new Graph_Algo(gg);
-			Path = (ArrayList<node_data>) Algo.shortestPath(gg.Robots.get(robotId).getSrc(), f.getEdge().getSrc());
-			Path.add(gg.getNodes().get(f.getEdge().getDest()));
-			gg.Robots.get(robotId).setisEating(true);
-			ans=Path.get(1).getKey();
-			return ans;
+			System.out.println("im here 2");
+			
+			Fruit f = RobotAlgo.getClosestFruit(gg.Robots.get(robotId).getID(), game);
+			Edge edge = RobotAlgo.findEdge(f);
+			System.out.println(edge.getSrc());
+			f.setEdge(edge);
+			if(f.getEdge() != null) {
+				System.out.println(gg.Fruits.toString());
+				Graph_Algo Algo =  new Graph_Algo(gg);
+				System.out.println("im here 3");
+				System.out.println("robot :"+gg.Robots.get(robotId).getSrc());
+				System.out.println("fruit type is :"+f.getType());
+				
+				// the problem is that after number of iterations the fruit edge is null.
+				
+				System.out.println("fruit edge:"+f.getEdge().getSrc());
+				Path = (ArrayList<node_data>) Algo.shortestPath(gg.Robots.get(robotId).getSrc(), f.getEdge().getSrc());
+				System.out.println("im here 4");
+				Path.add(gg.getNodes().get(f.getEdge().getDest()));
+				gg.Robots.get(robotId).setisEating(true);
+				System.out.println("im here 5");
+				ans = Path.get(1).getKey();
+				System.out.println("im here 6");
+				Path.add(gg.getNodes().get(gg.Robots.get(robotId).getSrc()));
+				System.out.println("im here 7");
+				
+				return ans;
+			}
 		} catch (Exception e) {}
-		Path.add(gg.getNodes().get(gg.Robots.get(robotId).getSrc()));
 		System.out.println(Path.toString());
 		return ans;
 	}
+	private static int nextNode(game_service game, int robotId, GraphGUI gui) {
+		if(gui.chosenFruit != null && gui.chosenRobot !=null) {
+			
+		}
+		return 0;
+	}
+//	public static void update(game_service game, DGraph gameGraph) throws JSONException{
+//		String gameToString = game.toString();
+//		JSONObject line;
+//		line = new JSONObject(gameToString);
+//		JSONObject GameServerJson = line.getJSONObject("GameServer");
+//		int amoutOfRobotsInGame = GameServerJson.getInt("robots"); //ttt.getInt("robots");
+//		System.out.println("gameToString = " + gameToString);
+//		System.out.println("gameGraphString = ");
+//		// the list of fruits should be considered in your solution
+////		gameGraph.Fruits.clear(); //not needed, the Fruits of the graph is empty
+//		Iterator<String> fruits_iterator = game.getFruits().iterator();
+//		while(fruits_iterator.hasNext()) {
+//			try {
+//				gameGraph.addFruit(new Fruit(fruits_iterator.next()));
+//			} catch (Exception e) {
+//				// TODO: handle exception
+//			}
+//		}	
+//		int src_node =0;// arbitrary node, you should start at one of the fruits
+//		for(int a = 0;a<amoutOfRobotsInGame;a++) {
+//			try {
+//				game.addRobot(src_node+a);
+//				System.out.println("game.getRobots() = " + game.getRobots());
+//				gameGraph.addRobot(new Robot(game.getRobots().get(a)));
+//			} catch (Exception e) {
+//				// TODO: handle exception
+//			}
+//		}//end add robots at random nodes.
+//		for(int robot : gameGraph.Robots.keySet()) {
+//			gameGraph.Robots.get(robot).setisEating(false);
+//		}
+//	}
 //	List<String> log = game.move();
 //	if(log!=null) {
 //		long t = game.timeToEnd();

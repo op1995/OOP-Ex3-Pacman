@@ -40,7 +40,7 @@ import utils.Point3D;
  */
 public class SimpleGameClient extends Thread{
 	public static void main(String[] a) {
-		test1(new DGraph(),2);
+		test1(new DGraph(),23);
 		}
 	public static void test1(DGraph gg , int scenario_num) {
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games

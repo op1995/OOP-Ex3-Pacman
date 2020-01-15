@@ -284,6 +284,8 @@ public class DGraph implements graph, Serializable{
 	}
 	public void init(String graphJson) {
 		 try {
+			 	Nodes.clear();
+			 	Edges.clear();
 			 	JSONObject g = new JSONObject(graphJson);
 	            JSONArray n = g.getJSONArray("Nodes");
 	            JSONArray e = g.getJSONArray("Edges");
