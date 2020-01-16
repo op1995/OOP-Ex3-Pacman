@@ -1,4 +1,6 @@
 package gameClient;
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -12,6 +14,7 @@ public class Robot extends Thread{
 	private double speed;
 	private Point3D position; // based on pos.
 	private boolean isEating;
+	private ArrayList<node_data> PathToFruit;
 	public Robot(String Json) {
 		 try {
 			 	JSONObject g = new JSONObject(Json);
@@ -23,6 +26,7 @@ public class Robot extends Thread{
 	            this.dest = g.getJSONObject("Robot").getInt("dest");
 	            this.speed = g.getJSONObject("Robot").getDouble("speed");
 	            this.isEating = false;
+	            this.PathToFruit = new ArrayList<node_data>();
 	        } catch (Exception e) {System.out.println(e);}
 	}
 	public int getID() {
@@ -63,5 +67,11 @@ public class Robot extends Thread{
 	}
 	public boolean getisEating() {
 		return this.isEating;
+	}
+	public ArrayList<node_data> getPathToFruit(){
+		return PathToFruit;
+	}
+	public void setPathToFruit(ArrayList<node_data> path) {
+		this.PathToFruit = path;
 	}
 }

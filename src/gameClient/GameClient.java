@@ -50,9 +50,9 @@ public class GameClient{
 	}
 	public static void test1(DGraph gameGraph , int scenario_num) {
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
-//		for(String gotRobot: game.getRobots()) { 				//this is useless. No robots were added yet.
-//			System.out.println("gotRobot = " + gotRobot);
-//		}
+		for(String gotRobot: game.getRobots()) { 				//this is useless. No robots were added yet.
+			System.out.println("gotRobot = " + gotRobot);
+		}
 		
 		String gameGraphString = game.getGraph();
 		gameGraph.init(gameGraphString);

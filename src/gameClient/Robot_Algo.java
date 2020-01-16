@@ -108,6 +108,7 @@ public class Robot_Algo {
 					}
 				}
 				minDestFruit.setEdge(findEdge(minDestFruit));
+				minDestFruit.setisAlive(true);
 				return minDestFruit;
 			} catch (Exception e) {
 				//System.out.println(e);

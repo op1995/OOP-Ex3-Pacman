@@ -37,9 +37,9 @@ import utils.Range;
 public class GraphGUI{
     /** Holds the graph GUI component */
     GraphComponent graphComponent; 
-    private DGraph Graph;
+    DGraph Graph;
     /** The window */
-    public static JFrame frame;
+    static JFrame frame;
     /** The node last selected by the user. */
     private Node chosenNode;
     /** The robot last selected by the user. */
@@ -56,12 +56,13 @@ public class GraphGUI{
   	private int height;
  	private Range rangex;
   	private Range rangey;
-  	private boolean chooseRobot;
+  	boolean chooseRobot;
   	private boolean AddRobot;
-  	private game_service game;
+  	game_service game;
   	boolean a = false;
   	Thread thread;
   	int scenario_num = 0;
+  	Robot_Algo RobotAlgo;
     private static boolean windowsOn = false;
     /**
      *  Constructor that builds a completely empty graph.
@@ -71,8 +72,10 @@ public class GraphGUI{
 		initializeGraph();
 		this.ImageCount = 0;
 		this.graphComponent = new GraphComponent(this.Graph);
+		this.RobotAlgo = new Robot_Algo(Graph);
 		rangex=new Range(35.1850,35.2150);
 		rangey=new Range(32.0950, 32.1130);
+		game = Game_Server.getServer(scenario_num);
 		width=1100;
 		height=700;
     }
@@ -81,8 +84,10 @@ public class GraphGUI{
 		initializeGraph();
 		this.ImageCount = 0;
 		this.graphComponent = new GraphComponent(g);
+		this.RobotAlgo = new Robot_Algo(Graph);
 		rangex=new Range(35.1850,35.2150);
 		rangey=new Range(32.0950, 32.1130);
+		game = Game_Server.getServer(scenario_num);
 		width=1100;
 		height=700;
     }
@@ -329,9 +334,6 @@ public class GraphGUI{
 //		    return (x <= y) && (y <= z);
 //		}
 
-		public void mouseDragged(MouseEvent e) {
-			
-		}
 		public void mouseReleased(MouseEvent e) {
 			//AddRobot = true;
 			chooseRobot = true;
@@ -384,6 +386,20 @@ public class GraphGUI{
 							}
 						}
 				    }
+				    if(chosenFruit != null && chosenRobot != null) {
+						Graph_Algo Algo = new Graph_Algo(Graph);
+						int src = chosenRobot.getSrc();
+						int dest = chosenFruit.getEdge().getSrc();
+						int dest2 = chosenFruit.getEdge().getDest();
+						ArrayList<node_data> Path = new ArrayList<node_data>();
+						Path = (ArrayList<node_data>) Algo.shortestPath(src, dest);
+						Path.add(Graph.getNodes().get(dest2));
+						Graph.Robots.get(chosenRobot.getID()).setPathToFruit(Path);
+						System.out.println(Path.toString());
+						chosenFruit = null;
+						chosenRobot = null;
+					}
+					chosenFruit = null;
 				} catch (Exception e2) {}
 			}//up till now we choose a robot and a fruit
 			if(AddRobot == true) {//not all robots were added yet
@@ -406,8 +422,6 @@ public class GraphGUI{
 				}
 			}
 		}
-		public void mouseClicked(MouseEvent e) {}
-		public void mouseMoved(MouseEvent e) {}
     }
     public void AddRobot() {
     	
