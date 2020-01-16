@@ -46,7 +46,7 @@ import utils.Point3D;
 public class GameClient{
 	static int myMovesCounter = 0;
 	public static void main(String[] a) {
-		test1(new DGraph(),23);
+		test1(new DGraph(),1);
 	}
 	public static void test1(DGraph gameGraph , int scenario_num) {
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
@@ -78,7 +78,7 @@ public class GameClient{
 					// TODO: handle exception
 				}
 			}	
-			int src_node =0;// arbitrary node, you should start at one of the fruits
+			int src_node =10;// arbitrary node, you should start at one of the fruits
 			for(int a = 0;a<amoutOfRobotsInGame;a++) {
 				try {
 					game.addRobot(src_node+a);
@@ -114,7 +114,6 @@ public class GameClient{
 			finalGrade = String.valueOf(GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
 			finalGrade = "Game Over. Score : " + finalGrade;
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		JOptionPane.showMessageDialog(GraphGUI.frame, finalGrade);
@@ -151,7 +150,7 @@ public class GameClient{
 						System.out.println("robotInfoFromJson = " + robotInfoFromJson);
 						JSONObject GameInfoFromJson = new JSONObject(game.toString());
 						System.out.println("Our Current grade is = " + GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
-						if(grade != GameInfoFromJson.getJSONObject("GameServer").getInt("grade")) {
+//						if(grade != GameInfoFromJson.getJSONObject("GameServer").getInt("grade")) {
 							grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
 							gg.Fruits.clear();
 							System.out.println("game.getFruits().toString() = "+game.getFruits().toString());
@@ -162,7 +161,7 @@ public class GameClient{
 									gg.addFruit(f);
 								} catch (Exception e) {}
 							}
-						}		
+//						}		
 					}
 					else {
 						gg.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
@@ -173,7 +172,6 @@ public class GameClient{
 				catch (JSONException e) {e.printStackTrace();}
 			}
 		}
-		
 	}
 	/**
 	 * a very simple random walk implementation!
@@ -182,7 +180,7 @@ public class GameClient{
 	 * @return
 	 */
 	private static int nextNode(game_service game, int robotId, DGraph gameGraph) {
-		int ans = gameGraph.Robots.get(robotId).getDest();
+		int ans = gameGraph.Robots.get(robotId).getSrc();
 		ArrayList<node_data> Path = new ArrayList<node_data>();
 		gameGraph.init(game.getGraph());
 		try {
@@ -191,10 +189,9 @@ public class GameClient{
 			gameGraph.Robots.get(robotId).setisEating(false);
 			Robot_Algo RobotAlgo = new Robot_Algo(gameGraph);
 			System.out.println("im here 2");
-			Fruit currentClosestFruit = RobotAlgo.getClosestFruit(gameGraph.Robots.get(robotId).getID(), game);
+			Fruit currentClosestFruit = RobotAlgo.getClosestFruit(gameGraph.Robots.get(robotId).getID(), game, gameGraph);
 			System.out.println("currentClosestFruit.toString() = " + currentClosestFruit.toString());
 			Edge edge = RobotAlgo.findEdge(currentClosestFruit); //we should change this to get fruit's edge. This was tried but didn't always work. check in to this.
-//			System.out.println(edge.getSrc());
 			currentClosestFruit.setEdge(edge);
 			if(currentClosestFruit.getEdge() != null) {
 				System.out.println("gameGraph.Fruits.toString() = " + gameGraph.Fruits.toString());
@@ -202,10 +199,7 @@ public class GameClient{
 				System.out.println("im here 3");
 				System.out.println("robot :"+gameGraph.Robots.get(robotId).getSrc());
 				System.out.println("fruit type is :"+currentClosestFruit.getType());
-				
-				// the problem is that after number of iterations the fruit edge is null.
-				
-				System.out.println("fruit edge:"+currentClosestFruit.getEdge().getSrc());
+				System.out.println("fruit edge :"+currentClosestFruit.getEdge().getSrc());
 				Path = (ArrayList<node_data>) Algo.shortestPath(gameGraph.Robots.get(robotId).getSrc(), currentClosestFruit.getEdge().getSrc());
 				System.out.println("im here 4");
 				Path.add(gameGraph.getNodes().get(currentClosestFruit.getEdge().getDest()));
@@ -215,19 +209,13 @@ public class GameClient{
 				System.out.println("im here 6");
 				Path.add(gameGraph.getNodes().get(gameGraph.Robots.get(robotId).getSrc()));
 				System.out.println("im here 7");
-				
 				return ans;
 			}
 		} catch (Exception e) {}
 		System.out.println(Path.toString());
 		return ans;
 	}
-	private static int nextNode(game_service game, int robotId, GraphGUI gui) {
-		if(gui.chosenFruit != null && gui.chosenRobot !=null) {
-			
-		}
-		return 0;
-	}
+	
 //	public static void update(game_service game, DGraph gameGraph) throws JSONException{
 //		String gameToString = game.toString();
 //		JSONObject line;

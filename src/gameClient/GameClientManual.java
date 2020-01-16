@@ -44,7 +44,7 @@ import utils.Point3D;
  */
 public class GameClientManual{
 	public static void main(String[] a) {
-		test1(new DGraph(),2);
+		test1(new DGraph(),23);
 	}
 	public static void test1(DGraph gameGraph , int scenario_num) {
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
@@ -73,7 +73,7 @@ public class GameClientManual{
 					// TODO: handle exception
 				}
 			}	
-			int src_node =0;// arbitrary node, you should start at one of the fruits
+			int src_node =10;// arbitrary node, you should start at one of the fruits
 			for(int a = 0;a<amoutOfRobotsInGame;a++) {
 				try {
 					game.addRobot(src_node+a);
@@ -141,11 +141,11 @@ public class GameClientManual{
 						game.chooseNextEdge(robotId, dest);
 						gg.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
 						gg.Robots.get(robotId).setSrc(dest);
-						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
+						System.out.println("Turn to node: "+dest+" Robot id :"+robotId+"  time to end:"+(t/1000));
 						System.out.println(robotInfoFromJson);
 						JSONObject GameInfoFromJson = new JSONObject(game.toString());
 						System.out.println("Our Current grade is = " + GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
-						if(grade != GameInfoFromJson.getJSONObject("GameServer").getInt("grade")) {
+//						if(grade != GameInfoFromJson.getJSONObject("GameServer").getInt("grade")) {
 							grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
 							gg.Fruits.clear();
 							System.out.println("fruits :"+game.getFruits().toString());
@@ -156,7 +156,7 @@ public class GameClientManual{
 									gg.addFruit(f);
 								} catch (Exception e) {}
 							}
-						}		
+//						}		
 					}
 					else {
 						gg.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
@@ -180,6 +180,6 @@ public class GameClientManual{
 			Graph.Robots.get(robotId).getPathToFruit().remove(1);
 			return dest;
 		}
-		return 0;
+		return Graph.Robots.get(robotId).getSrc();
 	}
 }

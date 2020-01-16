@@ -44,6 +44,9 @@ public class Fruit {
 	public Point3D getPos() {
 		return this.pos;
 	}
+	public void setPos(Point3D p) {
+		this.pos = p;
+	}
 	public int getType() {
 		return this.type;
 	}

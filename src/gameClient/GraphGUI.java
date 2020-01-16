@@ -38,8 +38,9 @@ public class GraphGUI{
     /** Holds the graph GUI component */
     GraphComponent graphComponent; 
     DGraph Graph;
-    /** The window */
     static JFrame frame;
+
+    /** The window */
     /** The node last selected by the user. */
     private Node chosenNode;
     /** The robot last selected by the user. */
@@ -99,8 +100,6 @@ public class GraphGUI{
 	JMenuItem Auto = new JMenuItem(); 
 	JMenuItem Player = new JMenuItem();
 	JMenuItem StartGame = new JMenuItem();
-	JMenuItem ChooseDest = new JMenuItem();
-
     /**
      *  Create and show the GUI.
      */
@@ -118,12 +117,10 @@ public class GraphGUI{
     	    Auto=new JMenuItem("Auto");  
     	    Player=new JMenuItem("Player");
     	    StartGame=new JMenuItem("StartGame");
-    	    ChooseDest=new JMenuItem("ChooseDest");
     	    menu.add(saveImage); menu.add(Load); menu.add(Help);  
     	    submenu.add(Auto); submenu.add(Player);  submenu.add(StartGame);
     	    menu.add(submenu);
     	    mb.add(menu);  
-    	    mb.add(ChooseDest);
     	    frame.setJMenuBar(mb);  
     		// Add components
     		createComponents(frame.getContentPane());
@@ -215,14 +212,6 @@ public class GraphGUI{
 				} catch (Exception e2) {}
 			}
 		});	
-		ChooseDest.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					a = true;
-				} catch (Exception e2) {}
-			}
-		});
     }
     /**
      *  Execute the application.
@@ -336,7 +325,7 @@ public class GraphGUI{
 
 		public void mouseReleased(MouseEvent e) {
 			//AddRobot = true;
-			chooseRobot = true;
+			//chooseRobot = true;
 		}
 		public void mousePressed(MouseEvent e) {
 		    double mouseX = e.getX();

@@ -85,34 +85,36 @@ public class Robot_Algo {
 	/*
 	 * 
 	 */
-	public Fruit getClosestFruit(int robot, game_service game){
+	public Fruit getClosestFruit(int robot, game_service game, DGraph gameGraph){
 		if(!this.Graph.Robots.get(robot).getisEating()) {
-			this.Graph.Robots.get(robot).setisEating(true);
+			
 //			System.out.println();
 			Graph_Algo Algo = new Graph_Algo(this.Graph);
 			double minDest = Double.MAX_VALUE;
 			double dist = 0;
 			try {
 				Fruit minDestFruit = new Fruit();
-				for(Fruit f1 : this.Graph.Fruits.keySet()) {
+				for(Fruit f1 : gameGraph.Fruits.keySet()) {
 					Fruit f = f1;
 					boolean fbool = !f.getisAlive();
 					if(fbool) {
 						double weight = f.getEdge().getWeight();
-						double pathdist = Algo.shortestPathDist(this.Graph.Robots.get(robot).getSrc(), f.getEdge().getSrc());
+						double pathdist = Algo.shortestPathDist(gameGraph.Robots.get(robot).getSrc(), f.getEdge().getSrc());
 						dist = (pathdist+weight);
 						if(dist < minDest) {
-							minDestFruit = f1;
+							minDestFruit = f;
 							minDest = dist;
 						}
 					}
 				}
+				
 				minDestFruit.setEdge(findEdge(minDestFruit));
 				minDestFruit.setisAlive(true);
 				return minDestFruit;
 			} catch (Exception e) {
 				//System.out.println(e);
 			}
+			this.Graph.Robots.get(robot).setisEating(true);
 		}
 		return null;
 	}
