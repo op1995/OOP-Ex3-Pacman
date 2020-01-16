@@ -78,7 +78,7 @@ public class GameClient{
 					// TODO: handle exception
 				}
 			}	
-			int src_node =10;// arbitrary node, you should start at one of the fruits
+			int src_node =0;// arbitrary node, you should start at one of the fruits
 			for(int a = 0;a<amoutOfRobotsInGame;a++) {
 				try {
 					game.addRobot(src_node+a);
@@ -101,6 +101,7 @@ public class GameClient{
 			
 			if(System.currentTimeMillis() - lastUpdateTime >= 50) //if enough time has passed (50 milliseconds) 
 			try {
+//				System.out.println("50 milliseconds have passed");
 				moveRobots(game, gameGraph, gui);
 				gui.graphComponent.repaint();
 				lastUpdateTime = System.currentTimeMillis();

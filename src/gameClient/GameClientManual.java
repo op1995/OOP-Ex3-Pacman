@@ -49,7 +49,7 @@ public class GameClientManual{
 	public static void test1(DGraph gameGraph , int scenario_num) {
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		for(String gotRobot: game.getRobots()) {
-			System.out.println(gotRobot);
+			System.out.println("gotRobot = " + gotRobot);
 		}
 		String gameGraphString = game.getGraph();
 		gameGraph.init(gameGraphString);
@@ -77,7 +77,7 @@ public class GameClientManual{
 			for(int a = 0;a<amoutOfRobotsInGame;a++) {
 				try {
 					game.addRobot(src_node+a);
-//					System.out.println("game.getRobots() = " + game.getRobots());
+					//					System.out.println("game.getRobots() = " + game.getRobots());
 					gameGraph.addRobot(new Robot(game.getRobots().get(a)));
 				} catch (Exception e) {
 					// TODO: handle exception
@@ -94,15 +94,15 @@ public class GameClientManual{
 		long lastUpdateTime = System.currentTimeMillis();
 		gui.chooseRobot = true;
 		while(game.isRunning()) {
-			
+
 			if(System.currentTimeMillis() - lastUpdateTime >= 50) //if enough time has passed (50 milliseconds) 
-			try {
-				moveRobots(game, gameGraph, gui);
-				gui.graphComponent.repaint();
-				lastUpdateTime = System.currentTimeMillis();
-			} catch (Exception e) {}
+				try {
+					moveRobots(game, gameGraph, gui);
+					gui.graphComponent.repaint();
+					lastUpdateTime = System.currentTimeMillis();
+				} catch (Exception e) {}
 		}
-		
+
 		String results = game.toString();
 		String finalGrade = "Game Over";
 		try {
@@ -136,27 +136,28 @@ public class GameClientManual{
 					int robotId = robotInfoFromJson.getInt("id");
 					int src = robotInfoFromJson.getInt("src");
 					int dest = robotInfoFromJson.getInt("dest");
-					if(dest==-1) {	
+					if(dest==-1) {
 						dest = nextNode(robotId,gg);
+						if(dest==-1) {continue;} // if we got back -1 here, it means the user hasn't chosen a fruit. Nothing to do.
 						game.chooseNextEdge(robotId, dest);
 						gg.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
 						gg.Robots.get(robotId).setSrc(dest);
-						System.out.println("Turn to node: "+dest+" Robot id :"+robotId+"  time to end:"+(t/1000));
-						System.out.println(robotInfoFromJson);
+						//						System.out.println("Turn to node: "+dest+" Robot id :"+robotId+"  time to end:"+(t/1000));
+						//						System.out.println("robotId = " + robotId + ". robotInfoFromJson = " + robotInfoFromJson);
 						JSONObject GameInfoFromJson = new JSONObject(game.toString());
-						System.out.println("Our Current grade is = " + GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
-//						if(grade != GameInfoFromJson.getJSONObject("GameServer").getInt("grade")) {
-							grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
-							gg.Fruits.clear();
-							System.out.println("fruits :"+game.getFruits().toString());
-							Iterator<String> f_iter = game.getFruits().iterator();
-							while(f_iter.hasNext()) {
-								try {
-									Fruit f = new Fruit(f_iter.next());
-									gg.addFruit(f);
-								} catch (Exception e) {}
-							}
-//						}		
+						//						System.out.println("Our Current grade is = " + GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
+						//						if(grade != GameInfoFromJson.getJSONObject("GameServer").getInt("grade")) {
+						grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
+						gg.Fruits.clear();
+						//							System.out.println("fruits :"+game.getFruits().toString());
+						Iterator<String> f_iter = game.getFruits().iterator();
+						while(f_iter.hasNext()) {
+							try {
+								Fruit f = new Fruit(f_iter.next());
+								gg.addFruit(f);
+							} catch (Exception e) {}
+						}
+						//						}		
 					}
 					else {
 						gg.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
@@ -166,7 +167,7 @@ public class GameClientManual{
 				catch (JSONException e) {e.printStackTrace();}
 			}
 		}
-		
+
 	}
 	/**
 	 * a very simple random walk implementation!
@@ -175,11 +176,23 @@ public class GameClientManual{
 	 * @return
 	 */
 	private static int nextNode(int robotId, DGraph Graph) {
-		if(!Graph.Robots.get(robotId).getPathToFruit().isEmpty()) {
-			int dest = Graph.Robots.get(robotId).getPathToFruit().get(1).getKey();
-			Graph.Robots.get(robotId).getPathToFruit().remove(1);
-			return dest;
+
+		try {
+			if(Graph.Robots.get(robotId).getPathToFruit().size()>=1) {
+				int dest = Graph.Robots.get(robotId).getPathToFruit().get(0).getKey(); //get the next node on the list
+				Graph.Robots.get(robotId).getPathToFruit().remove(0); //remove it from the list
+				return dest;
+			}
+			else {
+				return -1; //the list of the robot's path is empty, i.e. - the user hasn't chosen a next fruit. return -1 to indicate no where to go.
+			}
+
 		}
-		return Graph.Robots.get(robotId).getSrc();
+		catch(Exception e) {
+			System.err.println("Error in nextNode method.");
+			e.printStackTrace();
+			System.err.println("Returning -1");
+			return -1;
+		}
 	}
 }

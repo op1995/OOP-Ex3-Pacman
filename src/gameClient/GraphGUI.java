@@ -255,15 +255,15 @@ public class GraphGUI{
 					+ "The Number should be between 0 to 23");
 		}
 		game = Game_Server.getServer(scenario_num);
-		String g = game.getGraph();
-		Graph.init(g);
+		String gameGetGraph = game.getGraph();
+		Graph.init(gameGetGraph);
 		execute();
 		String info = game.toString();
 		JSONObject line;
 		try {
 			line = new JSONObject(info);
-			System.out.println(info);
-			System.out.println(g);
+			System.out.println("info = " + info);
+			System.out.println("gameGetGraph = " + gameGetGraph);
 			// the list of fruits should be considered in your solution
 			Iterator<String> f_iter = game.getFruits().iterator();
 			while(f_iter.hasNext()) {
@@ -325,7 +325,7 @@ public class GraphGUI{
 
 		public void mouseReleased(MouseEvent e) {
 			//AddRobot = true;
-			//chooseRobot = true;
+			chooseRobot = true;
 		}
 		public void mousePressed(MouseEvent e) {
 		    double mouseX = e.getX();
@@ -341,7 +341,7 @@ public class GraphGUI{
 						    try {
 						    	if(Graph.Robots.containsKey(robot)) {//TODO not needed condition (always true)
 							    	chosenRobot = Graph.Robots.get(robot);
-							    	System.out.println(chosenRobot.getID());
+//							    	System.out.println("chosenRobot.getID() = " + chosenRobot.getID());
 							    }
 							} catch (Exception e2) {
 								System.out.println(e2);
@@ -355,7 +355,7 @@ public class GraphGUI{
 						    try {
 						    	if(Graph.Fruits.containsKey(fruit)) {//TODO not needed condition (always true) 
 							    	chosenFruit = fruit;
-							    	System.out.println(fruit.getType());
+//							    	System.out.println("fruit.getType() = " + fruit.getType());
 							    }
 							} catch (Exception e2) {
 								System.out.println(e2);
@@ -384,7 +384,7 @@ public class GraphGUI{
 						Path = (ArrayList<node_data>) Algo.shortestPath(src, dest);
 						Path.add(Graph.getNodes().get(dest2));
 						Graph.Robots.get(chosenRobot.getID()).setPathToFruit(Path);
-						System.out.println(Path.toString());
+//						System.out.println("Manual mode - setting path of robot " + Graph.Robots.get(chosenRobot.getID()) + ". It is = " + Path.toString());
 						chosenFruit = null;
 						chosenRobot = null;
 					}

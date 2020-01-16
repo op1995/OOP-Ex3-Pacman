@@ -251,7 +251,7 @@ public class Graph_Algo implements graph_algorithms, Serializable{
 			newPath.remove(0);
 			this.path = newPath;
 			this.distance = ((Node) newPath.get(newPath.size()-1)).getWeight();
-			System.out.println(this.distance);
+			System.out.println("this.distance = " + this.distance);
 		}
 		
 		public shortestPathNode(node_data nodeToAdd) {
@@ -358,8 +358,8 @@ public class Graph_Algo implements graph_algorithms, Serializable{
 			answer.addAll(currentPath);
 		}
 		
-		System.out.println(minimum);
-		System.out.println(answer.toString());
+		System.out.println("minimum = " + minimum);
+		System.out.println("answer.toString() = " + answer.toString());
 		return answer;
 		
 	}//end TSP
