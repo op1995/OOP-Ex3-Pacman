@@ -53,4 +53,8 @@ public class Fruit {
 	public void setisAlive(boolean is) {
 		this.isAlive = is;
 	}
+	public String toString() {
+		//TODO decide if we need this or if we want to change this
+		return "This Fruit position = " + this.pos.toString();
+	}
 }

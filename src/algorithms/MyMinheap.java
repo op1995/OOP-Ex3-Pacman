@@ -103,6 +103,7 @@ public class MyMinheap {
 		}
 		if (smallest!=v){
 			swap(v, smallest);
+			minHeapify(smallest); //minHeapify the "new" child, as in - check that the new place for the node that was degraded , that it isn't bigger then it's children
 			minHeapify(parent(v));
 		}		
 	}

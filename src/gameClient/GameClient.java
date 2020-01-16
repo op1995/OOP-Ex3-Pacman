@@ -41,15 +41,19 @@ import utils.Point3D;
  * 10. prints the game results (after "game over"): (line 63)
  * @author boaz.benmoshe
  */
+
+
 public class GameClient{
+	static int myMovesCounter = 0;
 	public static void main(String[] a) {
-		test1(new DGraph(),0);
+		test1(new DGraph(),23);
 	}
 	public static void test1(DGraph gameGraph , int scenario_num) {
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
-		for(String gotRobot: game.getRobots()) {
-			System.out.println(gotRobot);
-		}
+//		for(String gotRobot: game.getRobots()) { 				//this is useless. No robots were added yet.
+//			System.out.println("gotRobot = " + gotRobot);
+//		}
+		
 		String gameGraphString = game.getGraph();
 		gameGraph.init(gameGraphString);
 		GraphGUI  gui = new GraphGUI(gameGraph);
@@ -65,6 +69,8 @@ public class GameClient{
 			// the list of fruits should be considered in your solution
 			gameGraph.Fruits.clear();
 			Iterator<String> fruits_iterator = game.getFruits().iterator();
+			List<String> gameFruitsList = game.getFruits();
+			System.out.println("gameFruitsList = " + gameFruitsList.toString());
 			while(fruits_iterator.hasNext()) {
 				try {
 					gameGraph.addFruit(new Fruit(fruits_iterator.next()));
@@ -106,13 +112,14 @@ public class GameClient{
 		try {
 			JSONObject GameInfoFromJson = new JSONObject(game.toString());
 			finalGrade = String.valueOf(GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
-			finalGrade = "Game Over. Score - " + finalGrade;
+			finalGrade = "Game Over. Score : " + finalGrade;
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		JOptionPane.showMessageDialog(GraphGUI.frame, finalGrade);
 		System.out.println("Game Over: "+results);
+		System.out.println("myMovesCounter = " + myMovesCounter);
 	}
 	/** 
 	 * Moves each of the robots along the edge, 
@@ -123,6 +130,7 @@ public class GameClient{
 	 */
 	private static void moveRobots(game_service game, DGraph gg, GraphGUI gui) {
 		List<String> log = game.move();
+		myMovesCounter++;
 		int grade = 0;
 		if(log!=null) {
 			long t = game.timeToEnd();
@@ -140,13 +148,13 @@ public class GameClient{
 						gg.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
 						gg.Robots.get(robotId).setSrc(dest);
 						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
-						System.out.println(robotInfoFromJson);
+						System.out.println("robotInfoFromJson = " + robotInfoFromJson);
 						JSONObject GameInfoFromJson = new JSONObject(game.toString());
 						System.out.println("Our Current grade is = " + GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
 						if(grade != GameInfoFromJson.getJSONObject("GameServer").getInt("grade")) {
 							grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
 							gg.Fruits.clear();
-							System.out.println("fruits :"+game.getFruits().toString());
+							System.out.println("game.getFruits().toString() = "+game.getFruits().toString());
 							Iterator<String> f_iter = game.getFruits().iterator();
 							while(f_iter.hasNext()) {
 								try {
@@ -173,39 +181,39 @@ public class GameClient{
 	 * @param robotId
 	 * @return
 	 */
-	private static int nextNode(game_service game, int robotId, DGraph gg) {
-		int ans = gg.Robots.get(robotId).getDest();
+	private static int nextNode(game_service game, int robotId, DGraph gameGraph) {
+		int ans = gameGraph.Robots.get(robotId).getDest();
 		ArrayList<node_data> Path = new ArrayList<node_data>();
-		gg.init(game.getGraph());
+		gameGraph.init(game.getGraph());
 		try {
-			System.out.println(gg.Robots.get(robotId).getSrc());
+			System.out.println("gameGraph.Robots.get(robotId).getSrc() = " + gameGraph.Robots.get(robotId).getSrc());
 			System.out.println("im here 1");
-			gg.Robots.get(robotId).setisEating(false);
-			Robot_Algo RobotAlgo = new Robot_Algo(gg);
+			gameGraph.Robots.get(robotId).setisEating(false);
+			Robot_Algo RobotAlgo = new Robot_Algo(gameGraph);
 			System.out.println("im here 2");
-			
-			Fruit f = RobotAlgo.getClosestFruit(gg.Robots.get(robotId).getID(), game);
-			Edge edge = RobotAlgo.findEdge(f); //we should change this to get fruit's edge. This was tried but didn't always work. check in to this.
+			Fruit currentClosestFruit = RobotAlgo.getClosestFruit(gameGraph.Robots.get(robotId).getID(), game);
+			System.out.println("currentClosestFruit.toString() = " + currentClosestFruit.toString());
+			Edge edge = RobotAlgo.findEdge(currentClosestFruit); //we should change this to get fruit's edge. This was tried but didn't always work. check in to this.
 //			System.out.println(edge.getSrc());
-			f.setEdge(edge);
-			if(f.getEdge() != null) {
-				System.out.println(gg.Fruits.toString());
-				Graph_Algo Algo =  new Graph_Algo(gg);
+			currentClosestFruit.setEdge(edge);
+			if(currentClosestFruit.getEdge() != null) {
+				System.out.println("gameGraph.Fruits.toString() = " + gameGraph.Fruits.toString());
+				Graph_Algo Algo =  new Graph_Algo(gameGraph);
 				System.out.println("im here 3");
-				System.out.println("robot :"+gg.Robots.get(robotId).getSrc());
-				System.out.println("fruit type is :"+f.getType());
+				System.out.println("robot :"+gameGraph.Robots.get(robotId).getSrc());
+				System.out.println("fruit type is :"+currentClosestFruit.getType());
 				
 				// the problem is that after number of iterations the fruit edge is null.
 				
-				System.out.println("fruit edge:"+f.getEdge().getSrc());
-				Path = (ArrayList<node_data>) Algo.shortestPath(gg.Robots.get(robotId).getSrc(), f.getEdge().getSrc());
+				System.out.println("fruit edge:"+currentClosestFruit.getEdge().getSrc());
+				Path = (ArrayList<node_data>) Algo.shortestPath(gameGraph.Robots.get(robotId).getSrc(), currentClosestFruit.getEdge().getSrc());
 				System.out.println("im here 4");
-				Path.add(gg.getNodes().get(f.getEdge().getDest()));
-				gg.Robots.get(robotId).setisEating(true);
+				Path.add(gameGraph.getNodes().get(currentClosestFruit.getEdge().getDest()));
+				gameGraph.Robots.get(robotId).setisEating(true);
 				System.out.println("im here 5");
 				ans = Path.get(1).getKey();
 				System.out.println("im here 6");
-				Path.add(gg.getNodes().get(gg.Robots.get(robotId).getSrc()));
+				Path.add(gameGraph.getNodes().get(gameGraph.Robots.get(robotId).getSrc()));
 				System.out.println("im here 7");
 				
 				return ans;

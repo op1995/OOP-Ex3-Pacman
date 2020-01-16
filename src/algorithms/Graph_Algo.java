@@ -157,6 +157,9 @@ public class Graph_Algo implements graph_algorithms, Serializable{
 			return lastNodeInPath.getWeight();
 		}
 		catch(Exception e) {
+			System.err.println(" ERROR - shortestPathDist. stack trace = ");
+			e.printStackTrace();
+			System.err.println("returning infinity");
 			return Double.POSITIVE_INFINITY;
 		}
 

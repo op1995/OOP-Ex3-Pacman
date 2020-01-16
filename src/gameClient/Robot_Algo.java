@@ -11,7 +11,7 @@ import dataStructure.node_data;
 import utils.Point3D;
 
 public class Robot_Algo {
-	public static final double EPS1 = 0.01, EPS2=EPS1*EPS1, EPS = EPS2;
+	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS = EPS2;
 	private DGraph Graph;
 	/*
 	 * A constructor.
@@ -88,7 +88,7 @@ public class Robot_Algo {
 	public Fruit getClosestFruit(int robot, game_service game){
 		if(!this.Graph.Robots.get(robot).getisEating()) {
 			this.Graph.Robots.get(robot).setisEating(true);
-			System.out.println();
+//			System.out.println();
 			Graph_Algo Algo = new Graph_Algo(this.Graph);
 			double minDest = Double.MAX_VALUE;
 			double dist = 0;
