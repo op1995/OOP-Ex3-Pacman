@@ -27,26 +27,57 @@ import oop_dataStructure.OOP_DGraph;
 import oop_dataStructure.oop_edge_data;
 import oop_dataStructure.oop_graph;
 import utils.Point3D;
-/**
- * This class represents a simple example for using the GameServer API:
- * the main file performs the following tasks:
- * 1. Creates a game_service [0,23] (line 36)
- * 2. Constructs the graph from JSON String (lines 37-39)
- * 3. Gets the scenario JSON String (lines 40-41)
- * 4. Prints the fruits data (lines 49-50)
- * 5. Add a set of robots (line 52-53) // note: in general a list of robots should be added
- * 6. Starts game (line 57)
- * 7. Main loop (should be a thread) (lines 59-60)
- * 8. move the robot along the current edge (line 74)
- * 9. direct to the next edge (if on a node) (line 87-88)
- * 10. prints the game results (after "game over"): (line 63)
- * @author boaz.benmoshe
- */
-public class GameClientManual{
+
+public class MyGameGUI{
 	public static void main(String[] a) {
-		test1(new DGraph(),23);
+		int mode = -1;
+    	String modeString = JOptionPane.showInputDialog("Which mode would you like?\n 0 - Automatic\n 1 - Manual");
+    	if(modeString!=null) {
+    		try {
+    			mode = Integer.valueOf(modeString);
+    		}
+    		catch(Exception e) {
+//    			System.err.println("1Please try again and enter a valid value");
+    			JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 or 1)");
+    			System.exit(-1);
+    		}	
+    	}
+    	else {
+    		JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 or 1)");
+    		System.exit(-1);
+    	}
+    	
+    	if(mode<0 || mode>1) {
+    		JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 or 1)");
+			System.exit(-1);
+    	}
+    	
+    	int scenario_num = -1;
+		scenario_num = Integer.valueOf(JOptionPane.showInputDialog("Input a scenario Number between 0 to 23."));
+		if(scenario_num<0 || scenario_num>23) {
+			JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 to 23)");
+			System.exit(-1);
+		}
+		
+		if(mode==0) {GameClient.runAuto(new DGraph(), scenario_num);}
+		else {runManual(new DGraph(), scenario_num);}
+    	
+//    	if(mode==0) {GameClient.callMe();}
+//    	else {callMe();}
 	}
-	public static void test1(DGraph gameGraph , int scenario_num) {
+	
+//	public static void callMe() {
+//		int scenario_num = -1;
+//		scenario_num = Integer.valueOf(JOptionPane.showInputDialog("Input a scenario Number between 0 to 23."));
+//		if(scenario_num<0 || scenario_num>23) {
+//			JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 to 23)");
+//			System.exit(-1);
+//		}
+//		runManual(new DGraph(),scenario_num);
+//		
+//	}
+	
+	public static void runManual(DGraph gameGraph , int scenario_num) {
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		for(String gotRobot: game.getRobots()) {
 			System.out.println("gotRobot = " + gotRobot);

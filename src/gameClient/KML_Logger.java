@@ -16,13 +16,13 @@ import Server.game_service;
 import dataStructure.DGraph;
 import dataStructure.Edge;
 
-public class KML implements Runnable {
+public class KML_Logger implements Runnable {
 
 	private game_service Game;
 	private int Timer;
 	private int Scenario_num;
 	private DGraph gameGraph;
-	public KML(DGraph graph,game_service game, int scenario_num) {
+	public KML_Logger(DGraph graph,game_service game, int scenario_num) {
 		this.gameGraph= graph;
 		this.Game=game;
 		this.Scenario_num=scenario_num;
@@ -78,6 +78,7 @@ public class KML implements Runnable {
 		String RobotsInfo="";
 		double timer=(Timer - Game.timeToEnd())/1000;
 		String[] Colors= {"ff0000ff","ffff0000","ff800080","ff00ffff","ffff00ff",};
+		String[] RobotPics = {"http://maps.google.com/mapfiles/kml/shapes/horsebackriding.png", "http://maps.google.com/mapfiles/kml/shapes/swimming.png", "http://maps.google.com/mapfiles/kml/shapes/motorcycling.png", "http://maps.google.com/mapfiles/kml/shapes/cycling.png", "http://maps.google.com/mapfiles/kml/shapes/ski.png"};
 		int i=0;
 		gameGraph.Robots = gameGraph.Robots;
 		for(int robot: gameGraph.Robots.keySet()) {
@@ -90,7 +91,8 @@ public class KML implements Runnable {
 					"<Style id=\"mycustommarker\">\r\n" + 
 					"<IconStyle>\r\n" + 
 					"<Icon>\r\n" + 
-					"<href>http://maps.google.com/mapfiles/ms/icons/hiker.png</href>" + 
+//					"<href>http://maps.google.com/mapfiles/kml/pal2/icon57.png</href>" +
+					"<href>"+RobotPics[i]+"</href>" +
 					"</Icon>\r\n" + 
 					"</IconStyle>\r\n" + 
 					"</Style>\r\n"+
@@ -116,10 +118,10 @@ public class KML implements Runnable {
 						"<IconStyle>\r\n" + 
 						"<Icon>\r\n" ; 
 				if(fruit.getType()==-1) {
-					FruitsInfo+=	"<href>http://maps.google.com/mapfiles/kml/shapes/mountains.png</href>";
+					FruitsInfo+=	"<href>http://maps.google.com/mapfiles/ms/micons/coffeehouse.png</href>";
 				}
 				else
-					FruitsInfo+=	"<href>http://maps.google.com/mapfiles/kml/shapes/sailing.png</href>";
+					FruitsInfo+=	"<href>http://maps.google.com/mapfiles/ms/micons/grocerystore.png</href>";
 				FruitsInfo+=	"</Icon>\r\n" + 
 						"</IconStyle>\r\n" + 
 						"</Style>\r\n"+
@@ -138,6 +140,13 @@ public class KML implements Runnable {
 		for(int node : gameGraph.Nodes.keySet()) {
 			NodesInfo+=	"<Placemark>\r\n"+
 					"<color>ff00aaff</color>"+
+					"<Style id=\"mycustommarker\">\r\n" + 
+					"<IconStyle>\r\n" + 
+					"<Icon>\r\n" + 
+					"<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>" + 
+					"</Icon>\r\n" + 
+					"</IconStyle>\r\n" + 
+					"</Style>\r\n"+
 					"<Point>\r\n"+  
 					"<coordinates>"+ gameGraph.Nodes.get(node).getLocation() + "</coordinates>\r\n"+  
 					"</Point>\r\n"+
