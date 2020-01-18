@@ -58,7 +58,7 @@ public class GraphGUI{
  	private Range rangex;
   	private Range rangey;
   	boolean chooseRobot;
-  	private boolean AddRobot;
+  	boolean AddRobot;
   	game_service game;
   	boolean a = false;
   	Thread thread;
@@ -197,7 +197,6 @@ public class GraphGUI{
 		Auto.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				MakePlayerAuto();
 			}
 		});	
 		/*
@@ -277,19 +276,6 @@ public class GraphGUI{
 			}	
 		}
 		catch (JSONException e2) {e2.printStackTrace();}
-    }
-    public void MakePlayerAuto() {
-    	scenario_num = Integer.valueOf(JOptionPane.showInputDialog("Input a scenario Number between 0 to 23."));
-		if(scenario_num > 23 || scenario_num <0) {
-			JOptionPane.showMessageDialog(frame, "Please input a legal scenario Number"
-					+ "The Number should be between 0 to 23");
-		}
-		game = Game_Server.getServer(scenario_num);
-		String gameGetGraph = game.getGraph();
-		Graph.Fruits.clear();
-		Graph.Robots.clear();
-		Graph.init(gameGetGraph);
-		execute();
     }
     public void userPlay() {
     	// TODO implement.

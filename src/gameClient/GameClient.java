@@ -46,7 +46,9 @@ import utils.Point3D;
 public class GameClient{
 	static int myMovesCounter = 0;
 	public static void main(String[] a) {
-		runAuto(new DGraph(),2);
+		int scenario_num = 0;
+		scenario_num = Integer.valueOf(JOptionPane.showInputDialog("Input a scenario Number between 0 to 23."));		
+		runAuto(new DGraph(),scenario_num);
 	}
 	public static void runAuto(DGraph gameGraph , int scenario_num) {
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
@@ -71,23 +73,19 @@ public class GameClient{
 			Iterator<String> fruits_iterator = game.getFruits().iterator();
 			List<String> gameFruitsList = game.getFruits();
 			System.out.println("gameFruitsList = " + gameFruitsList.toString());
+			int a = 0;
 			while(fruits_iterator.hasNext()) {
 				try {
-					gameGraph.addFruit(new Fruit(fruits_iterator.next()));
-				} catch (Exception e) {
-					// TODO: handle exception
-				}
+					Fruit fruit = new Fruit(fruits_iterator.next());
+					gameGraph.addFruit(fruit);
+					int src = fruit.getEdge().getSrc();
+					if(a < amoutOfRobotsInGame) {
+						game.addRobot(src);
+						gameGraph.addRobot(new Robot(game.getRobots().get(a)));
+						a++;
+					}
+				} catch (Exception e) {}
 			}	
-			int src_node =0;// arbitrary node, you should start at one of the fruits
-			for(int a = 0;a<amoutOfRobotsInGame;a++) {
-				try {
-					game.addRobot(src_node+a);
-//					System.out.println("game.getRobots() = " + game.getRobots());
-					gameGraph.addRobot(new Robot(game.getRobots().get(a)));
-				} catch (Exception e) {
-					// TODO: handle exception
-				}
-			}//end add robots at random nodes.
 			for(int robot : gameGraph.Robots.keySet()) {
 				gameGraph.Robots.get(robot).setisEating(false); //initing the game, so all the robots should be set to not eating mode
 			}
