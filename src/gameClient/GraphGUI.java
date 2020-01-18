@@ -187,6 +187,7 @@ public class GraphGUI{
 				chooseRobot = false;
 				try {
 					MakePlayer();
+					a = true;
 					AddRobot = true;
 				} catch (Exception e2) {
 					JOptionPane.showMessageDialog(frame, e2);
@@ -196,7 +197,7 @@ public class GraphGUI{
 		Auto.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				MakePlayerAuto();
 			}
 		});	
 		/*
@@ -207,6 +208,7 @@ public class GraphGUI{
 			public void actionPerformed(ActionEvent e) {
 				AddRobot = false;
 				try {
+					a = false;
 					chooseRobot = true;
 					game.startGame();
 				} catch (Exception e2) {}
@@ -256,6 +258,8 @@ public class GraphGUI{
 		}
 		game = Game_Server.getServer(scenario_num);
 		String gameGetGraph = game.getGraph();
+		Graph.Fruits.clear();
+		Graph.Robots.clear();
 		Graph.init(gameGetGraph);
 		execute();
 		String info = game.toString();
@@ -274,6 +278,19 @@ public class GraphGUI{
 		}
 		catch (JSONException e2) {e2.printStackTrace();}
     }
+    public void MakePlayerAuto() {
+    	scenario_num = Integer.valueOf(JOptionPane.showInputDialog("Input a scenario Number between 0 to 23."));
+		if(scenario_num > 23 || scenario_num <0) {
+			JOptionPane.showMessageDialog(frame, "Please input a legal scenario Number"
+					+ "The Number should be between 0 to 23");
+		}
+		game = Game_Server.getServer(scenario_num);
+		String gameGetGraph = game.getGraph();
+		Graph.Fruits.clear();
+		Graph.Robots.clear();
+		Graph.init(gameGetGraph);
+		execute();
+    }
     public void userPlay() {
     	// TODO implement.
     }
@@ -281,50 +298,10 @@ public class GraphGUI{
      *  A mouse listener to handle click and drag actions on nodes.
      */
     private class MyMouseListener extends MouseAdapter {
-//		/** How far off the center of the node was the click? */
-//		private int deltaX;
-//		private int deltaY;
-//		/**
-//		 *  This finds the shortest distance between mouse click point and line.
-//		 *  Used to tell whether user clicked within 5px of an edge.
-//		 *
-//		 *  @return the distance between the point and the line
-//		 */
-//		public double findDist(Edge edge,
-//				       double edgeX1, double edgeY1, double edgeX2, double edgeY2,
-//				       double mouseX, double mouseY) {
-//		    double edgeSlope = (edgeY2 - edgeY1) / (edgeX2 - edgeX1);
-//		    double dist;
-//		
-//		    if (edgeSlope == 0.0) {
-//			dist = -1.0;
-//		    } else {
-//			double perpSlope = (-1) * (1 / edgeSlope);
-//			/* solving intersection:
-//			   edge equation: y = edgeSlope(x) - edgeSlope(edgeX1) + edgeY1
-//			   perp equation: y = perpSlope(x) - perpSlope(mouseX) + mouseY
-//			   x = (edgeSlope*edgeX1 - edgeY1 - perpSlope*mouseX + mouseY) / (edgeSlope - perpSlope)
-//			*/
-//			double commonX = (edgeSlope*edgeX1 - edgeY1 - perpSlope*mouseX + mouseY) / (edgeSlope - perpSlope);
-//			double commonY = edgeSlope*(commonX - edgeX1) + edgeY1;
-//			double dx = Math.abs(mouseX - commonX);
-//			double dy = Math.abs(mouseY - commonY);
-//			dist = Math.sqrt(dx*dx + dy*dy);
-//		    }
-//		    return dist;
-//		}
-//
-//		/**
-//		 *  Tells whether x is less than y and y is less than z.
-//		 *
-//		 *  @return true if x <= y <= z
-//		 */
-//		public boolean ordered(double x, double y, double z) {
-//		    return (x <= y) && (y <= z);
-//		}
-
 		public void mouseReleased(MouseEvent e) {
-			//AddRobot = true;
+			if(a == true) {
+				AddRobot = true;
+			}
 			chooseRobot = true;
 		}
 		public void mousePressed(MouseEvent e) {

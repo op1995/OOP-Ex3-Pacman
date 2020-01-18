@@ -46,9 +46,9 @@ import utils.Point3D;
 public class GameClient{
 	static int myMovesCounter = 0;
 	public static void main(String[] a) {
-		test1(new DGraph(),1);
+		runAuto(new DGraph(),2);
 	}
-	public static void test1(DGraph gameGraph , int scenario_num) {
+	public static void runAuto(DGraph gameGraph , int scenario_num) {
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		for(String gotRobot: game.getRobots()) { 				//this is useless. No robots were added yet.
 			System.out.println("gotRobot = " + gotRobot);
@@ -96,18 +96,21 @@ public class GameClient{
 			// TODO: handle exception
 		}
 		game.startGame();
-		long lastUpdateTime = System.currentTimeMillis();
-		while(game.isRunning()) {
-			
-			if(System.currentTimeMillis() - lastUpdateTime >= 50) //if enough time has passed (50 milliseconds) 
-			try {
-//				System.out.println("50 milliseconds have passed");
-				moveRobots(game, gameGraph, gui);
-				gui.graphComponent.repaint();
-				lastUpdateTime = System.currentTimeMillis();
-			} catch (Exception e) {}
-		}
-		
+		KML kml = new KML(gameGraph, game,scenario_num);
+		Thread kmlThread = new Thread(kml);
+		kmlThread.start();
+		try {
+			long lastUpdateTime = System.currentTimeMillis();
+			while(game.isRunning()) {
+				if(System.currentTimeMillis() - lastUpdateTime >= 50) //if enough time has passed (50 milliseconds) 
+				try {
+//					System.out.println("50 milliseconds have passed");
+					moveRobots(game, gameGraph, gui);
+					gui.graphComponent.repaint();
+					lastUpdateTime = System.currentTimeMillis();
+				} catch (Exception e) {}
+			}
+		} catch (Exception e) {}
 		String results = game.toString();
 		String finalGrade = "Game Over";
 		try {

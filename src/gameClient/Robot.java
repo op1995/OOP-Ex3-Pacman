@@ -71,6 +71,7 @@ public class Robot extends Thread{
 	public ArrayList<node_data> getPathToFruit(){
 		return PathToFruit;
 	}
+	
 	public void setPathToFruit(ArrayList<node_data> path) {
 		this.PathToFruit = path;
 	}
