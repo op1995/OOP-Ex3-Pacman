@@ -144,3 +144,26 @@ This package contains several utilities given to us, to help us create and manag
 This project further includes the data and pics folders, containing info about the different nodes and edges coordinates, our best scores in each game in KML files, and pictures used to display the fruits and robots on the screen.
 
 The lib folder contains the Json jar, and the GameServer jar. The latter is the server that was written by our division's headmaster. This jar file gives and manages the games of this project. The updates and choosen next nodes to go to, the location of the fruits on the graph and the time management of the games are done by this jar file.
+
+## Support
+
+For help you can go to the javadoc. you can get a better explanations for the methods in the classes.
+
+In the wiki we explain how to use this project, its prefered to read the instructions in the  **wiki pages.**
+
+## Contributing
+
+If you want to make changes to the code i will recommend to go over the tester before, it will help you to understand how the Methods and the Classes work. 
+
+## Authors and acknowledgment
+
+The Authors of this project are  **Ibrahem chahine, Ofir Peller.**
+
+I want to thank all the GitHub open source users. Also, we thank :
+
+1.  GeeksforGeeks.org,
+2.  [stackoverflow.com].
+3.  [GitHub.com].
+4.  [[https://www.math.ucla.edu/~akrieger/teaching/18s/pic20a/examples/complex/](https://www.math.ucla.edu/~akrieger/teaching/18s/pic20a/examples/complex/)]
+5.  [[https://www.makeareadme.com/#template-1](https://www.makeareadme.com/#template-1)]
+6.  [youtube.com]
