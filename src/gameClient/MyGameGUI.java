@@ -31,52 +31,38 @@ import utils.Point3D;
 public class MyGameGUI{
 	public static void main(String[] a) {
 		int mode = -1;
-    	String modeString = JOptionPane.showInputDialog("Which mode would you like?\n 0 - Automatic\n 1 - Manual");
-    	if(modeString!=null) {
-    		try {
-    			mode = Integer.valueOf(modeString);
-    		}
-    		catch(Exception e) {
-//    			System.err.println("1Please try again and enter a valid value");
-    			JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 or 1)");
-    			System.exit(-1);
-    		}	
-    	}
-    	else {
-    		JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 or 1)");
-    		System.exit(-1);
-    	}
-    	
-    	if(mode<0 || mode>1) {
-    		JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 or 1)");
+		String modeString = JOptionPane.showInputDialog("Which mode would you like?\n 0 - Automatic\n 1 - Manual");
+		if(modeString!=null) {
+			try {
+				mode = Integer.valueOf(modeString);
+			}
+			catch(Exception e) {
+				//    			System.err.println("1Please try again and enter a valid value");
+				JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 or 1)");
+				System.exit(-1);
+			}	
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 or 1)");
 			System.exit(-1);
-    	}
-    	
-    	int scenario_num = -1;
+		}
+
+		if(mode<0 || mode>1) {
+			JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 or 1)");
+			System.exit(-1);
+		}
+
+		int scenario_num = -1;
 		scenario_num = Integer.valueOf(JOptionPane.showInputDialog("Input a scenario Number between 0 to 23."));
 		if(scenario_num<0 || scenario_num>23) {
 			JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 to 23)");
 			System.exit(-1);
 		}
-		
-		if(mode==0) {GameClient.runAuto(new DGraph(), scenario_num);}
+
+		if(mode==0) {AutomaticGameClass.runAuto(new DGraph(), scenario_num);}
 		else {runManual(new DGraph(), scenario_num);}
-    	
-//    	if(mode==0) {GameClient.callMe();}
-//    	else {callMe();}
 	}
-	
-//	public static void callMe() {
-//		int scenario_num = -1;
-//		scenario_num = Integer.valueOf(JOptionPane.showInputDialog("Input a scenario Number between 0 to 23."));
-//		if(scenario_num<0 || scenario_num>23) {
-//			JOptionPane.showMessageDialog(null, "Invalid input. Please run the program again, with a valid input (0 to 23)");
-//			System.exit(-1);
-//		}
-//		runManual(new DGraph(),scenario_num);
-//		
-//	}
-	
+
 	public static void runManual(DGraph gameGraph , int scenario_num) {
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		for(String gotRobot: game.getRobots()) {
@@ -151,10 +137,10 @@ public class MyGameGUI{
 	 * Moves each of the robots along the edge, 
 	 * in case the robot is on a node the next destination (next edge) is chosen (randomly).
 	 * @param game
-	 * @param gg
+	 * @param gameGraph
 	 * @param log
 	 */
-	private static void moveRobots(game_service game, DGraph gg, GraphGUI gui) {
+	private static void moveRobots(game_service game, DGraph gameGraph, GraphGUI gui) {
 		List<String> log = game.move();
 		int grade = 0;
 		if(log!=null) {
@@ -168,31 +154,31 @@ public class MyGameGUI{
 					int src = robotInfoFromJson.getInt("src");
 					int dest = robotInfoFromJson.getInt("dest");
 					if(dest==-1) {
-						dest = nextNode(robotId,gg);
+						dest = nextNode(robotId,gameGraph);
 						if(dest==-1) {continue;} // if we got back -1 here, it means the user hasn't chosen a fruit. Nothing to do.
 						game.chooseNextEdge(robotId, dest);
-						gg.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
-						gg.Robots.get(robotId).setSrc(dest);
+						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
+						gameGraph.Robots.get(robotId).setSrc(dest);
 						//						System.out.println("Turn to node: "+dest+" Robot id :"+robotId+"  time to end:"+(t/1000));
 						//						System.out.println("robotId = " + robotId + ". robotInfoFromJson = " + robotInfoFromJson);
 						JSONObject GameInfoFromJson = new JSONObject(game.toString());
 						//						System.out.println("Our Current grade is = " + GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
 						//						if(grade != GameInfoFromJson.getJSONObject("GameServer").getInt("grade")) {
 						grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
-						gg.Fruits.clear();
+						gameGraph.Fruits.clear();
 						//							System.out.println("fruits :"+game.getFruits().toString());
 						Iterator<String> f_iter = game.getFruits().iterator();
 						while(f_iter.hasNext()) {
 							try {
 								Fruit f = new Fruit(f_iter.next());
-								gg.addFruit(f);
+								gameGraph.addFruit(f);
 							} catch (Exception e) {}
 						}
 						//						}		
 					}
 					else {
-						gg.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
-						gg.Robots.get(robotId).setDest(dest);;
+						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
+						gameGraph.Robots.get(robotId).setDest(dest);;
 					}
 				} 
 				catch (JSONException e) {e.printStackTrace();}

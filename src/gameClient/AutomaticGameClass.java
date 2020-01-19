@@ -29,7 +29,7 @@ import utils.Point3D;
 
 
 
-public class GameClient{
+public class AutomaticGameClass{
 	static int myMovesCounter = 0;
 	public static void main(String[] a) {
 		int scenario_num = -1;
@@ -119,6 +119,7 @@ public class GameClient{
 	 */
 	private static void moveRobots(game_service game, DGraph gameGraph, GraphGUI gui) {
 		List<String> log = game.move();
+		System.out.println("log.toString() = " + log.toString());
 		myMovesCounter++;
 		int grade = 0;
 		if(log!=null) {

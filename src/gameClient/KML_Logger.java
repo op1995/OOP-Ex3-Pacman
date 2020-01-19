@@ -156,7 +156,8 @@ public class KML_Logger implements Runnable {
 	}
 	public void saveToFile(String file_name) throws IOException {
 		try {
-			File f=new File(this.Scenario_num+".kml");
+			LocalDateTime creatingTime = LocalDateTime.now();
+			File f=new File(this.Scenario_num+"_"+creatingTime.toString()+".kml");
 			PrintWriter printWriter=new PrintWriter(f);
 			printWriter.write(file_name);
 			printWriter.close();
