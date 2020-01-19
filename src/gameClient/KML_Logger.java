@@ -94,7 +94,6 @@ public class KML_Logger implements Runnable {
 	 */
 	public String Robots() {
 		String RobotsInfo="";
-		double timer=(Timer - Game.timeToEnd())/1000;
 		String[] Colors= {"ff0000ff","ffff0000","ff800080","ff00ffff","ffff00ff"};
 		String[] RobotPics = {"http://maps.google.com/mapfiles/kml/shapes/horsebackriding.png", "http://maps.google.com/mapfiles/kml/shapes/swimming.png", "http://maps.google.com/mapfiles/kml/shapes/motorcycling.png", "http://maps.google.com/mapfiles/kml/shapes/cycling.png", "http://maps.google.com/mapfiles/kml/shapes/ski.png"};
 		int i=0;
@@ -181,8 +180,10 @@ public class KML_Logger implements Runnable {
 	}
 	public void saveToFile(String file_name) throws IOException {
 		try {
-			LocalDateTime CreatingTime = LocalDateTime.now();
-			File f=new File(this.Scenario_num+"_"+CreatingTime.toString()+".kml");
+//			LocalDateTime CreatingTime = LocalDateTime.now();
+//			File f=new File(this.Scenario_num+"_"+CreatingTime.toString()+".kml");
+			File f=new File(this.Scenario_num+".kml");
+			
 			PrintWriter printWriter=new PrintWriter(f);
 			printWriter.write(file_name);
 			printWriter.close();
