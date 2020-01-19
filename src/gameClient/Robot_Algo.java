@@ -82,8 +82,12 @@ public class Robot_Algo {
 		}
 		return null;
 	}
-	/*
+	/**
 	 * 
+	 * @param robot
+	 * @param game
+	 * @param gameGraph
+	 * @return
 	 */
 	public Fruit getClosestFruit(int robot, game_service game, DGraph gameGraph){
 		if(!this.Graph.Robots.get(robot).getisEating()) {

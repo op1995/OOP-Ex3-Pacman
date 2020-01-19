@@ -1,5 +1,4 @@
 package gameClient;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -27,9 +26,10 @@ import oop_dataStructure.oop_edge_data;
 import oop_dataStructure.oop_graph;
 import utils.Point3D;
 
-
-
 public class AutomaticGameClass{
+	/**
+	 * This class is for the automatic robot playing. 
+	 */
 	static int myMovesCounter = 0;
 	public static void main(String[] a) {
 		int scenario_num = -1;
@@ -40,7 +40,17 @@ public class AutomaticGameClass{
 		}
 		runAuto(new DGraph(),scenario_num);
 	}
-	
+	/**
+	 * This method runs the automatic robots with an algorithms such that : the robots will eat the maximum number of fruits.
+	 * @param myMovesCounter The number of times we called the game.move method.
+	 * @param gameGraphString The info about Nodes and Edges of the Graph that belongs to the game.
+	 * @param gui GraphGUI object to display the game.
+	 * @param gameToString Info about the game, it will include grade, scenario number, time...
+	 * @param amoutOfRobotsInGame The amount of playing robots in the Game.
+	 * @param kml A KML_Logger object to save the game to kml.
+	 * @param kmlThread A Thread to start the kml with the game.
+	 * @param lastUpdateTime The local time.
+	 */
 	public static void runAuto(DGraph gameGraph , int scenario_num) {
 		myMovesCounter = 0;
 		game_service game = Game_Server.getServer(scenario_num); // input will be from [0,23] games
@@ -112,10 +122,11 @@ public class AutomaticGameClass{
 	}
 	/** 
 	 * Moves each of the robots along the edge, 
-	 * in case the robot is on a node the next destination (next edge) is chosen (randomly).
-	 * @param game
-	 * @param gameGraph
-	 * @param log
+	 * in case the robot is on a node the next destination (next edge) is chosen by Shortest-Path algorithm.
+	 * @param game game_service object to play the game.
+	 * @param gameGraph The graph of the game according to the scenario number.
+	 * @param log gam.move().
+	 * @param robot_json A Json string represents the Robot.
 	 */
 	private static void moveRobots(game_service game, DGraph gameGraph, GraphGUI gui) {
 		List<String> log = game.move();
@@ -166,10 +177,10 @@ public class AutomaticGameClass{
 	}
 	/**
 	 * this method sets the path of each robot in the game according to our algorithm.
-	 * @param game
-	 * @param robotId
-	 * @param gameGraph
-	 * @return
+	 * @param game game_service Object.
+	 * @param robotId the ID of the given Robot.
+	 * @param gameGraph The Graph that belong to the game scenario number.
+	 * @return the destination of the robot that his ID is robotId.
 	 */
 	private static int nextNode(game_service game, int robotId, DGraph gameGraph) {
 		int ans = gameGraph.Robots.get(robotId).getSrc();

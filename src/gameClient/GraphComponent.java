@@ -69,7 +69,8 @@ public class GraphComponent extends JComponent{
 		height=700;
 	  }
 	  /**
-	   *  This method Draws the graph.
+	   * This method paints the nodes of this Graph.
+	   * @param g Graphics.
 	   */
 	  public void paintNodes(Graphics g) {
 		  	double X=width/rangex.get_length();
@@ -83,6 +84,18 @@ public class GraphComponent extends JComponent{
 				g.drawString(String.valueOf(v), x0-NODE_RADIUS, y0-NODE_RADIUS);
 			}
 	  }
+	  /**
+	   * This method paints the Edges if this Graph.
+	   * @param g Graphics.
+	   * @param x0 The x position of the source node of an edge.
+	   * @param y0 The y position of the source node of an edge.
+	   * @param x1 The x position of the destination node of an edge.
+	   * @param y1 The y position of the destination node of an edge.
+	   * @param theta The angle of edge's arrow.
+	   * @param edgeX The the x position of the edge.
+	   * @param edgeX The the y position of the edge.
+	   * @param arrowHead A polygon for the arrow head.
+	   */
 	  public void paintEdges(Graphics g) {
 		  double X=width/rangex.get_length();
 			double Y=(0-height)/rangey.get_length();
@@ -116,6 +129,14 @@ public class GraphComponent extends JComponent{
 				}
 			}
 	  }
+	  /**
+	   * This method paint the Robots of this graph.
+	   * @param r An ID of a robot in this Graph.
+	   * @param x the x position of a Robot in the Graph.
+	   * @param y the y position of a Robot in the Graph.
+	   * @param image The image of the robot to paint.
+	   * @param g Graphics.
+	   */
 	  public void paintRobots(Graphics g) {
 		  	double X=width/rangex.get_length();
 			double Y=(0-height)/rangey.get_length();
@@ -137,6 +158,14 @@ public class GraphComponent extends JComponent{
 			}
 			
 		}
+	  /**
+	   * This method paint the Robots of this graph.
+	   * @param f A Fruit in this Graph.
+	   * @param x the x position of a Fruit in the Graph.
+	   * @param y the y position of a Fruit in the Graph.
+	   * @param image The image of the Fruit to paint.
+	   * @param g Graphics.
+	   */
 	  public void paintFruits(Graphics g) {
 		  double X=width/rangex.get_length();
 	 	  double Y=(0-height)/rangey.get_length();
@@ -178,6 +207,9 @@ public class GraphComponent extends JComponent{
 
 		}
 	}
+	  /**
+	   * This method paint this Graph.
+	   */
 	  public void paint(Graphics g){
 		  try {
 			  paintEdges(g);
@@ -187,16 +219,21 @@ public class GraphComponent extends JComponent{
 		} catch (Exception e) {}
 			
 	  }
+	  /**
+	   * This method save an image to file.
+	   * @param name The file name.
+	   * @param type The type of the file.
+	   */
 	  public void saveImage(String name,String type) {
 		  	BufferedImage image = new BufferedImage(getWidth(),getHeight(), BufferedImage.TYPE_3BYTE_BGR);
 			Graphics2D g2 = image.createGraphics();
 			paint(g2);
 			try{
 				ImageIO.write(image, type, new File(name+"."+type));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+	}
 	  /**
 		 * 
 		 * @param data denote some data to be scaled

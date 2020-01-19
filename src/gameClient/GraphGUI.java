@@ -95,11 +95,6 @@ public class GraphGUI{
     JMenu menu = new JMenu();
     JMenu submenu = new JMenu();  
     JMenuItem saveImage = new JMenuItem();
-    JMenuItem Load = new JMenuItem();
-	JMenuItem Help = new JMenuItem();
-	JMenuItem Auto = new JMenuItem(); 
-	JMenuItem Player = new JMenuItem();
-	JMenuItem StartGame = new JMenuItem();
     /**
      *  Create and show the GUI.
      */
@@ -110,16 +105,8 @@ public class GraphGUI{
     		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     		JMenuBar mb=new JMenuBar();  
     	    menu=new JMenu("Menu");  
-    	    submenu=new JMenu("play");  
     	    saveImage=new JMenuItem("Save Image");  
-    	    Load=new JMenuItem("Load Game");  
-    	    Help=new JMenuItem("Help");  
-    	    Auto=new JMenuItem("Auto");  
-    	    Player=new JMenuItem("Player");
-    	    StartGame=new JMenuItem("StartGame");
-    	    menu.add(saveImage); menu.add(Load); menu.add(Help);  
-    	    submenu.add(Auto); submenu.add(Player);  submenu.add(StartGame);
-    	    menu.add(submenu);
+    	    menu.add(saveImage);
     	    mb.add(menu);  
     	    frame.setJMenuBar(mb);  
     		// Add components
@@ -149,68 +136,6 @@ public class GraphGUI{
 			public void actionPerformed(ActionEvent e) {
 				graphComponent.saveImage("image"+ImageCount,"png");
 				ImageCount++;
-			}
-		});
-		/*Load Game **/
-		Load.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser LoadFromFile = new JFileChooser();
-				LoadFromFile.setDialogTitle("Choose a file to load");
-				LoadFromFile.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				int returnVal = LoadFromFile.showOpenDialog(pane);
-				File file = LoadFromFile.getSelectedFile();
-				if(returnVal == JFileChooser.APPROVE_OPTION) {
-					Scanner sc;
-					try {
-						sc = new Scanner(file);
-						String graph = sc.nextLine();
-						Graph.init(graph);
-					} catch (FileNotFoundException e1) {
-						e1.printStackTrace();
-					} 					
-				}
-				graphComponent = new GraphComponent(Graph);
-				graphComponent.repaint();
-				execute();
-			}
-		});
-		Help.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO pop up a Tutorial.
-			}
-		});
-		Player.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				chooseRobot = false;
-				try {
-					MakePlayer();
-					a = true;
-					AddRobot = true;
-				} catch (Exception e2) {
-					JOptionPane.showMessageDialog(frame, e2);
-				}
-			}
-		});		
-		Auto.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-			}
-		});	
-		/*
-		 * for algorithms.
-		 */
-		StartGame.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				AddRobot = false;
-				try {
-					a = false;
-					chooseRobot = true;
-					game.startGame();
-				} catch (Exception e2) {}
 			}
 		});	
     }

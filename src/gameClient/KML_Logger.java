@@ -22,6 +22,12 @@ public class KML_Logger implements Runnable {
 	private int Timer;
 	private int Scenario_num;
 	private DGraph gameGraph;
+	/**
+	 * A constructor.
+	 * @param graph
+	 * @param game
+	 * @param scenario_num
+	 */
 	public KML_Logger(DGraph graph,game_service game, int scenario_num) {
 		this.gameGraph= graph;
 		this.Game=game;
@@ -31,6 +37,11 @@ public class KML_Logger implements Runnable {
 		else
 			this.Timer=30000;
 	}
+	/**
+	 * This method creates a KML data for file for a game.
+	 * @param KML_Info the KML data for the file.
+	 * @return String that represents the game in a KML.
+	 */
 	public String createKMLfile() {
 		String KML_Info=
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" + 
@@ -74,10 +85,17 @@ public class KML_Logger implements Runnable {
 		}
 		return KML_Info;
 	}
+	/**
+	 * This method create a KML data for the Robots of the Game.
+	 * @param RobotsInfo The KML data for the Robots of this game.
+	 * @param Colors An array of colors.
+	 * @param RobotPics An array of url's for the robots pics.
+	 * @return KML data of the Robots for a KML file.
+	 */
 	public String Robots() {
 		String RobotsInfo="";
 		double timer=(Timer - Game.timeToEnd())/1000;
-		String[] Colors= {"ff0000ff","ffff0000","ff800080","ff00ffff","ffff00ff",};
+		String[] Colors= {"ff0000ff","ffff0000","ff800080","ff00ffff","ffff00ff"};
 		String[] RobotPics = {"http://maps.google.com/mapfiles/kml/shapes/horsebackriding.png", "http://maps.google.com/mapfiles/kml/shapes/swimming.png", "http://maps.google.com/mapfiles/kml/shapes/motorcycling.png", "http://maps.google.com/mapfiles/kml/shapes/cycling.png", "http://maps.google.com/mapfiles/kml/shapes/ski.png"};
 		int i=0;
 		gameGraph.Robots = gameGraph.Robots;
@@ -91,7 +109,6 @@ public class KML_Logger implements Runnable {
 					"<Style id=\"mycustommarker\">\r\n" + 
 					"<IconStyle>\r\n" + 
 					"<Icon>\r\n" + 
-//					"<href>http://maps.google.com/mapfiles/kml/pal2/icon57.png</href>" +
 					"<href>"+RobotPics[i]+"</href>" +
 					"</Icon>\r\n" + 
 					"</IconStyle>\r\n" + 
@@ -104,9 +121,13 @@ public class KML_Logger implements Runnable {
 		}
 		return RobotsInfo;
 	}
+	/**
+	 * This method create a KML data for the Fruits of the Game.
+	 * @param FruitsInfo The KML data for the Fruits of this game.
+	 * @return KML data of the Fruits for a KML file.
+	 */
 	public String Fruits() {
 		String FruitsInfo="";
-		//double timer=(Timer - Game.timeToEnd())/1000;
 		try {
 			for(Fruit fruit: gameGraph.Fruits.keySet()) {
 				FruitsInfo+=	"<Placemark>\r\n"+
@@ -131,10 +152,14 @@ public class KML_Logger implements Runnable {
 						"</Placemark>\r\n";
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println(e);
 		}
 		return FruitsInfo;
 	}
+	/**
+	 * This method adds the Nodes of this Graph to a KML data string.
+	 * @return A KML data string of the nodes for a file.
+	 */
 	public String addNodes() {
 		String NodesInfo="";
 		for(int node : gameGraph.Nodes.keySet()) {
@@ -156,8 +181,8 @@ public class KML_Logger implements Runnable {
 	}
 	public void saveToFile(String file_name) throws IOException {
 		try {
-			LocalDateTime creatingTime = LocalDateTime.now();
-			File f=new File(this.Scenario_num+"_"+creatingTime.toString()+".kml");
+			LocalDateTime CreatingTime = LocalDateTime.now();
+			File f=new File(this.Scenario_num+"_"+CreatingTime.toString()+".kml");
 			PrintWriter printWriter=new PrintWriter(f);
 			printWriter.write(file_name);
 			printWriter.close();

@@ -60,9 +60,19 @@ public class MyGameGUI{
 		}
 
 		if(mode==0) {AutomaticGameClass.runAuto(new DGraph(), scenario_num);}
-		else {runManual(new DGraph(), scenario_num);}
+		else {
+			runManual(new DGraph(), scenario_num);
+			}
 	}
-
+	/**
+	 * This method runs a user manual robot placement.
+	 * @param myMovesCounter The number of times we called the game.move method.
+	 * @param gameGraphString The info about Nodes and Edges of the Graph that belongs to the game.
+	 * @param gui GraphGUI object to display the game.
+	 * @param gameToString Info about the game, it will include grade, scenario number, time...
+	 * @param amoutOfRobotsInGame The amount of playing robots in the Game.
+	 * @param lastUpdateTime The local time.
+	 */
 	public static void runManual(DGraph gameGraph , int scenario_num) {
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		for(String gotRobot: game.getRobots()) {
@@ -89,11 +99,13 @@ public class MyGameGUI{
 				} catch (Exception e) {
 					// TODO: handle exception
 				}
-			}	
-			int src_node =10;// arbitrary node, you should start at one of the fruits
+			}	 
+			JOptionPane.showMessageDialog(GraphGUI.frame,"Pick the robots locations by writing the node key thet you want the robot placed on.");
+			int src_node = 0;
 			for(int a = 0;a<amoutOfRobotsInGame;a++) {
 				try {
-					game.addRobot(src_node+a);
+					src_node = Integer.valueOf(JOptionPane.showInputDialog("node key"));
+					game.addRobot(src_node);
 					//					System.out.println("game.getRobots() = " + game.getRobots());
 					gameGraph.addRobot(new Robot(game.getRobots().get(a)));
 				} catch (Exception e) {
@@ -101,12 +113,13 @@ public class MyGameGUI{
 				}
 			}//end add robots at random nodes.
 			for(int robot : gameGraph.Robots.keySet()) {
-				gameGraph.Robots.get(robot).setisEating(false); //initing the game, so all the robots should be set to not eating mode
+				gameGraph.Robots.get(robot).setisEating(false); //Initialize the game, so all the robots should be set to not eating mode
 			}
 		}
 		catch (JSONException e) {
 			// TODO: handle exception
 		}
+		JOptionPane.showMessageDialog(GraphGUI.frame, "click OK to start the game.");
 		game.startGame();
 		long lastUpdateTime = System.currentTimeMillis();
 		gui.chooseRobot = true;
@@ -134,11 +147,12 @@ public class MyGameGUI{
 		System.out.println("Game Over: "+results);
 	}
 	/** 
-	 * Moves each of the robots along the edge, 
-	 * in case the robot is on a node the next destination (next edge) is chosen (randomly).
-	 * @param game
-	 * @param gameGraph
-	 * @param log
+	 * This method Moves each of the robots along the edge, 
+	 * in case the robot is on a node the next destination (next edge) is chosen the user.
+	 * @param game game_service object to play the game.
+	 * @param gameGraph The graph of the game according to the scenario number.
+	 * @param log gam.move().
+	 * @param robot_json A Json string represents the Robot.
 	 */
 	private static void moveRobots(game_service game, DGraph gameGraph, GraphGUI gui) {
 		List<String> log = game.move();
@@ -171,14 +185,14 @@ public class MyGameGUI{
 						while(f_iter.hasNext()) {
 							try {
 								Fruit f = new Fruit(f_iter.next());
+								f.setisAlive(false);
 								gameGraph.addFruit(f);
 							} catch (Exception e) {}
 						}
-						//						}		
 					}
 					else {
 						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
-						gameGraph.Robots.get(robotId).setDest(dest);;
+						gameGraph.Robots.get(robotId).setDest(dest);
 					}
 				} 
 				catch (JSONException e) {e.printStackTrace();}
@@ -187,10 +201,11 @@ public class MyGameGUI{
 
 	}
 	/**
-	 * a very simple random walk implementation!
-	 * @param g
-	 * @param robotId
-	 * @return
+	 * this method sets the path of each robot in the game according to the user's input.
+	 * @param game game_service Object.
+	 * @param robotId the ID of the given Robot.
+	 * @param gameGraph The Graph that belong to the game scenario number.
+	 * @return the destination of the robot that his ID is robotId.
 	 */
 	private static int nextNode(int robotId, DGraph Graph) {
 
