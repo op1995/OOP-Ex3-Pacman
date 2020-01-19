@@ -13,7 +13,8 @@ A manual mode is also avilable.
 
 **In the algorithms package** 
 
-** - GraphAlgo class **
+**-GraphAlgo class**
+
 A class implementing the graph_algorithms class.
 Using smart algorithms we can conclude the best paths for us to take within the given graph.
 
@@ -28,7 +29,8 @@ shortestPath(int src, int dest) - Returns a list of nodes representing the short
 TSP(List<Integer> targets) - Returns a list of nodes representing the TSP path from the targets.
 ```
 
-** - MyMinHeap class **
+**-MyMinHeap class**
+
 A simple class to create and manage a minHeap. This is used to improve the copmlexity of our algorithms.
 
 ```
@@ -47,11 +49,12 @@ public boolean isEmpty() - returns false if the minHeap doesn't contain any node
 
 **In the dataStructure package** 
 
-** - DGraph class **
+**-DGraph class**
+
 Implemetns graph class.
 A class that represents and contains the components of the graph, such as Nodes, Edges, Fruits and Robots.
 There are 2 constructors. A default constructor and a copy constructor.
-• The user can use the following methods :
+The user can use the following methods :
 ```
 getNode(int key) - Will return the node data with the key.
 getEdge(int src, int dest) - Will return the Edge data with the source and destination keys.
@@ -77,7 +80,7 @@ You can view our previous project, where we did do so, if you'd like ()
 
 **In the gameClient package** 
 
-** - AutomaticGameClass class **
+**-AutomaticGameClass class**
 The goal of this class is to utilize smart algorithms in order to get the best result (highest score) we can, in each game. You can run this class and ask for any of 0-23 of the avilable levels.
 
 ```
@@ -92,21 +95,21 @@ If a robot is currently moving, and thus doesn't need to have it's next node set
 private static int nextNode(game_service game, int robotId, DGraph gameGraph) - For the given values, this method calculates the best next Node to go to, for the given robot in the game.
 ```
 
-** - Fruit class **
+**-Fruit class**
 A simple class representing a fruit in the game. Has a default constructor and a constructor using a Json formated string (as recived from the game server). Other then that only has sime basic getters and setters. (Pretty straight forward, detailing will make the readme too long).
 
-** - GraphComponent class **
+**-GraphComponent class**
 This class utilizes the DGraph class and paints a graph relevant to this task\project. This includes robots and fruits. Other than that just has some variables such as sizes and radiuses relevant to such objects.
 
-** - GraphGUI class **
+**-GraphGUI class**
 A class containing the settings and actionListeners of the graph. These settings are relevant for what fits the GUI of this project (more specific, less general, unlike similar classes before).
 
-** - KML_Logger class **
+**-KML_Logger class**
 This class is used to create KML files. These files are used as logs of runs of games.
 The created KML file can be later used to run a visual simulation of the game in Google Earth.
 The methods in the class get the nodes, edges, robots, and fruits of the given game. They are pretty straight forward, so there is no need to go in to detail about them here. You'll be able to understand it just by reading, given you are familiar with the KML formating.
 
-** - MyGameGUI class **
+**-MyGameGUI class**
 This class's purpose is to run the main GUI, giving a visual representation of all of the project.
 Running the class will result in asking the user to choose either the manual mode or the automatic mode, followed by choosing the level (0-23).
 
@@ -118,7 +121,7 @@ private static void moveRobots(game_service game, DGraph gameGraph, GraphGUI gui
 private static int nextNode(int robotId, DGraph Graph) - gives back the next node on the robot's path to selected fruit, and updates the path (removes the acquired node).
 ```
 
-** - Robot_Algo class **
+**-Robot_Algo class**
 The goal of this class is to utilize algorithms to make a calculated decision as to the fruit and path a given robot should take. These takes in to consideration the other robots currently on the graph as well, to maximize the gained score in the game.
 
 ```
@@ -128,7 +131,7 @@ public Edge findEdge(Fruit f) - This method finds the edge the given fruit is on
 public Fruit getClosestFruit(int robot, game_service game, DGraph gameGraph) - For the given values, this method returns the fruit closest to the given robot.
 ```
 
-** - Robot class **
+**-Robot class**
 A simple class, of which each object represents a robot in the current game.
 This class allows us to save and access the needed values of each of the game's robots, in order to make decisions such as where it should go next or if it needs to be directed at all.
 
@@ -144,3 +147,26 @@ This package contains several utilities given to us, to help us create and manag
 This project further includes the data and pics folders, containing info about the different nodes and edges coordinates, our best scores in each game in KML files, and pictures used to display the fruits and robots on the screen.
 
 The lib folder contains the Json jar, and the GameServer jar. The latter is the server that was written by our division's headmaster. This jar file gives and manages the games of this project. The updates and choosen next nodes to go to, the location of the fruits on the graph and the time management of the games are done by this jar file.
+
+## Support
+
+For help you can go to the javadoc. you can get a better explanations for the methods in the classes.
+
+In the wiki we explain how to use this project, its prefered to read the instructions in the  **wiki pages.**
+
+## Contributing
+
+If you want to make changes to the code i will recommend to go over the tester before, it will help you to understand how the Methods and the Classes work. 
+
+## Authors and acknowledgment
+
+The Authors of this project are  **Ibrahem chahine, Ofir Peller.**
+
+I want to thank all the GitHub open source users. Also, we thank :
+
+1.  GeeksforGeeks.org,
+2.  [stackoverflow.com].
+3.  [GitHub.com].
+4.  [[https://www.math.ucla.edu/~akrieger/teaching/18s/pic20a/examples/complex/](https://www.math.ucla.edu/~akrieger/teaching/18s/pic20a/examples/complex/)]
+5.  [[https://www.makeareadme.com/#template-1](https://www.makeareadme.com/#template-1)]
+6.  [youtube.com]
