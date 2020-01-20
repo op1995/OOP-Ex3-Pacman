@@ -102,9 +102,18 @@ public class AutomaticGameClass{
 				if(System.currentTimeMillis() - lastUpdateTime >= 50) //if enough time has passed (50 milliseconds) 
 				try {
 					gameGraph.Fruits.clear();
+//					ArrayList<String> OldFruitList = new ArrayList<String>();
+//					for(Fruit f : gameGraph.Fruits.keySet()) {
+//						OldFruitList.add(f.toString());
+//					}
+//					ArrayList<String> NewFruitList = new ArrayList<String>();
 					Iterator<String> f_iter = game.getFruits().iterator();
 					while(f_iter.hasNext()) {
 						try {
+//							String F = f_iter.next();
+//							if(!OldFruitList.contains(F)) {
+//								NewFruitList.add(F);
+//							}
 							Fruit f = new Fruit(f_iter.next());
 							gameGraph.addFruit(f);
 						} catch (Exception e) {}
@@ -162,8 +171,6 @@ public class AutomaticGameClass{
 						gameGraph.Robots.get(robotId).setSrc(dest);
 						JSONObject GameInfoFromJson = new JSONObject(game.toString());
 						grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
-						gameGraph.Fruits.clear();
-						System.out.println("game.getFruits().toString() = "+game.getFruits().toString());
 					}
 					else {
 						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));

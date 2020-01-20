@@ -40,6 +40,22 @@ public class Fruit {
 		}  
 	}
 	/**
+	 * Initialize From Json with isAlive.
+	 * @param Json
+	 */
+	public void FruitBoolean(String Json) {
+    	try {
+    		JSONObject g = new JSONObject(Json);
+			this.value = g.getJSONObject("Fruit").getDouble("value");
+			String pos = g.getJSONObject("Fruit").getString("pos");
+	        this.pos = new Point3D(pos);
+	        this.type = g.getJSONObject("Fruit").getInt("type");
+	        this.isAlive = Boolean.valueOf(g.getJSONObject("Fruit").getString("bool"));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}  
+	}
+	/**
 	 * A getter for the edge that the fruit is placed on.
 	 * @return the edge that the fruit is placed on.
 	 */
@@ -100,6 +116,10 @@ public class Fruit {
 	 */
 	public String toString() {
 		final String ans = "{\"Fruit\":{\"value\":" + this.value + "," + "\"type\":" + this.type + "," + "\"pos\":\"" + this.pos + "\"" + "}" + "}";
+		return ans;
+	}
+	public String toStringWithBoolean() {
+		final String ans = "{\"Fruit\":{\"value\":" + this.value + "," + "\"type\":" + this.type + "," + "\"pos\":\"" + this.pos + "\"" + "\"bool\":\"" + this.isAlive + "\"" + "}" + "}";
 		return ans;
 	}
 }
