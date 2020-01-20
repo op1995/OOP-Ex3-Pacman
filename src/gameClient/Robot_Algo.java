@@ -13,13 +13,13 @@ import utils.Point3D;
 public class Robot_Algo {
 	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS = EPS2;
 	private DGraph Graph;
-	/*
+	/**
 	 * A constructor.
 	 */
 	public Robot_Algo(DGraph g) {
 		this.Graph = g;
 	}
-	/*
+	/**
 	 * This method checks if a given point is on a line.
 	 * @param p The given point 
 	 * @param src The Source of the line.
@@ -34,7 +34,7 @@ public class Robot_Algo {
 		if(dist>d1-EPS2) {ans=true;}
 		return ans;
 	}
-	/*
+	/**
 	 * This method checks if a given point is on a Edge in a Graph.
 	 * @param p The given point.
 	 * @param s The source of the Edge.
@@ -48,7 +48,7 @@ public class Robot_Algo {
 		Point3D dest = g.getNode(d).getLocation();
 		return isOnEdge(p, src, dest);
 	}
-	/*
+	/**
 	 * This method checks if a given fruit in on a given edge.
 	 * @param p The point of the fruit.
 	 * @param e The given Edge.
@@ -64,7 +64,7 @@ public class Robot_Algo {
 		if(type>0 && dest<src) {return false;}
 		return isOnEdge(p, src, dest, g);
 	}
-	/*
+	/**
 	 * This method find the Edge of a given fruit.
 	 * @param f The Given Fruit.
 	 * @param u A source of an edge in this graph.
@@ -111,9 +111,12 @@ public class Robot_Algo {
 						}
 					}
 				}
-				
+				for(Fruit f : gameGraph.Fruits.keySet()) {
+					if(f.getEdge().getSrc() == minDestFruit.getEdge().getSrc()) {
+						f.setisAlive(true);
+					}
+				}
 				minDestFruit.setEdge(findEdge(minDestFruit));
-				minDestFruit.setisAlive(true);
 				return minDestFruit;
 			} catch (Exception e) {
 				//System.out.println(e);

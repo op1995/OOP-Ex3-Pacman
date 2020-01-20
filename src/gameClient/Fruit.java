@@ -99,6 +99,7 @@ public class Fruit {
 	 * @return String that represents the fruit.
 	 */
 	public String toString() {
-		return "This Fruit position = " + this.pos.toString();
+		final String ans = "{\"Fruit\":{\"value\":" + this.value + "," + "\"type\":" + this.type + "," + "\"pos\":\"" + this.pos + "\"" + "}" + "}";
+		return ans;
 	}
 }

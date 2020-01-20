@@ -147,6 +147,10 @@ public class GraphComponent extends JComponent{
 					BufferedImage image = ImageIO.read(new File("pics\\pacman1.gif"));
 					g.drawImage(image.getScaledInstance(NODE_RADIUS*5, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
 					g.setColor(Color.BLACK);
+//					g.drawString(String.valueOf(graph.Robots.get(r).getDest()), x-NODE_RADIUS, y-NODE_RADIUS);
+					g.setColor(Color.RED);
+					g.drawString(graph.Robots.get(r).getPathToFruit().toString(), x-NODE_RADIUS, y-NODE_RADIUS);
+
 				} catch (IOException e) {
 					try {
 //						System.out.println("Couldn't find picture pacman1.gif. Trying linux path instead.");
@@ -216,6 +220,7 @@ public class GraphComponent extends JComponent{
 			  paintNodes(g);
 			  paintFruits(g);
 			  paintRobots(g);
+			  g.drawString(graph.Fruits.toString(), 0, 10);
 		} catch (Exception e) {}
 			
 	  }

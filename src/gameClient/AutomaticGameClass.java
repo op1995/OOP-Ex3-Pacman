@@ -101,6 +101,14 @@ public class AutomaticGameClass{
 			while(game.isRunning()) {
 				if(System.currentTimeMillis() - lastUpdateTime >= 50) //if enough time has passed (50 milliseconds) 
 				try {
+					gameGraph.Fruits.clear();
+					Iterator<String> f_iter = game.getFruits().iterator();
+					while(f_iter.hasNext()) {
+						try {
+							Fruit f = new Fruit(f_iter.next());
+							gameGraph.addFruit(f);
+						} catch (Exception e) {}
+					}
 					moveRobots(game, gameGraph, gui);
 					gui.graphComponent.repaint();
 					lastUpdateTime = System.currentTimeMillis();
@@ -130,7 +138,7 @@ public class AutomaticGameClass{
 	 */
 	private static void moveRobots(game_service game, DGraph gameGraph, GraphGUI gui) {
 		List<String> log = game.move();
-		System.out.println("log.toString() = " + log.toString());
+//		System.out.println("log.toS0tring() = " + log.toString());
 		myMovesCounter++;
 		int grade = 0;
 		if(log!=null) {
@@ -143,33 +151,24 @@ public class AutomaticGameClass{
 					int robotId = robotInfoFromJson.getInt("id");
 					int src = robotInfoFromJson.getInt("src");
 					int dest = robotInfoFromJson.getInt("dest");
-					if(dest==-1) {	
+					String pos = robotInfoFromJson.getString("pos");
+					if(dest==-1) {
+						if(!pos.equals(gameGraph.Nodes.get(gameGraph.Robots.get(robotId).getSrc()).getLocation().toString())) {
+							continue;
+						}
 						dest = nextNode(game,robotId,gameGraph);
 						game.chooseNextEdge(robotId, dest);
 						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
 						gameGraph.Robots.get(robotId).setSrc(dest);
-						System.out.println("Turn to node: "+dest+"  time to end:"+(t/1000));
-						System.out.println("robotInfoFromJson = " + robotInfoFromJson);
 						JSONObject GameInfoFromJson = new JSONObject(game.toString());
-						System.out.println("Our Current grade is = " + GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
-//						if(grade != GameInfoFromJson.getJSONObject("GameServer").getInt("grade")) {
-							grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
-							gameGraph.Fruits.clear();
-							System.out.println("game.getFruits().toString() = "+game.getFruits().toString());
-							Iterator<String> f_iter = game.getFruits().iterator();
-							while(f_iter.hasNext()) {
-								try {
-									Fruit f = new Fruit(f_iter.next());
-									gameGraph.addFruit(f);
-								} catch (Exception e) {}
-							}
-//						}		
+						grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
+						gameGraph.Fruits.clear();
+						System.out.println("game.getFruits().toString() = "+game.getFruits().toString());
 					}
 					else {
 						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
-						gameGraph.Robots.get(robotId).setDest(dest);;
+						gameGraph.Robots.get(robotId).setDest(dest);
 					}
-//					System.out.println("log.grade = " + game.toString());
 				} 
 				catch (JSONException e) {e.printStackTrace();}
 			}
@@ -187,13 +186,13 @@ public class AutomaticGameClass{
 		ArrayList<node_data> Path = new ArrayList<node_data>();
 		gameGraph.init(game.getGraph());
 		try {
-			System.out.println("gameGraph.Robots.get(robotId).getSrc() = " + gameGraph.Robots.get(robotId).getSrc());
-			System.out.println("im here 1");
+//			System.out.println("gameGraph.Robots.get(robotId).getSrc() = " + gameGraph.Robots.get(robotId).getSrc());
+//			System.out.println("im here 1");
 			gameGraph.Robots.get(robotId).setisEating(false);
 			Robot_Algo RobotAlgo = new Robot_Algo(gameGraph);
-			System.out.println("im here 2");
+//			System.out.println("im here 2");
 			Fruit currentClosestFruit = RobotAlgo.getClosestFruit(gameGraph.Robots.get(robotId).getID(), game, gameGraph);
-			System.out.println("currentClosestFruit.toString() = " + currentClosestFruit.toString());
+//			System.out.println("currentClosestFruit.toString() = " + currentClosestFruit.toString());
 			Edge edge = RobotAlgo.findEdge(currentClosestFruit); //we should change this to get fruit's edge. This was tried but didn't always work. check in to this.
 			currentClosestFruit.setEdge(edge);
 			if(currentClosestFruit.getEdge() != null) {

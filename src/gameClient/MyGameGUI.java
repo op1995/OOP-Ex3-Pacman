@@ -127,6 +127,15 @@ public class MyGameGUI{
 
 			if(System.currentTimeMillis() - lastUpdateTime >= 50) //if enough time has passed (50 milliseconds) 
 				try {
+					gameGraph.Fruits.clear();
+					Iterator<String> f_iter = game.getFruits().iterator();
+					while(f_iter.hasNext()) {
+						try {
+							Fruit f = new Fruit(f_iter.next());
+							f.setisAlive(false);
+							gameGraph.addFruit(f);
+						} catch (Exception e) {}
+					}
 					moveRobots(game, gameGraph, gui);
 					gui.graphComponent.repaint();
 					lastUpdateTime = System.currentTimeMillis();
@@ -173,22 +182,9 @@ public class MyGameGUI{
 						game.chooseNextEdge(robotId, dest);
 						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
 						gameGraph.Robots.get(robotId).setSrc(dest);
-						//						System.out.println("Turn to node: "+dest+" Robot id :"+robotId+"  time to end:"+(t/1000));
-						//						System.out.println("robotId = " + robotId + ". robotInfoFromJson = " + robotInfoFromJson);
 						JSONObject GameInfoFromJson = new JSONObject(game.toString());
-						//						System.out.println("Our Current grade is = " + GameInfoFromJson.getJSONObject("GameServer").getInt("grade"));
-						//						if(grade != GameInfoFromJson.getJSONObject("GameServer").getInt("grade")) {
 						grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
-						gameGraph.Fruits.clear();
-						//							System.out.println("fruits :"+game.getFruits().toString());
-						Iterator<String> f_iter = game.getFruits().iterator();
-						while(f_iter.hasNext()) {
-							try {
-								Fruit f = new Fruit(f_iter.next());
-								f.setisAlive(false);
-								gameGraph.addFruit(f);
-							} catch (Exception e) {}
-						}
+						
 					}
 					else {
 						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
