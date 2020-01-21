@@ -220,7 +220,7 @@ public class GraphComponent extends JComponent{
 			  paintNodes(g);
 			  paintFruits(g);
 			  paintRobots(g);
-			  g.drawString(graph.Fruits.toString(), 0, 10);
+//			  g.drawString(graph.Fruits.toString(), 0, 10);
 		} catch (Exception e) {}
 			
 	  }
