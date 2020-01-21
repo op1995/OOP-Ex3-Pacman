@@ -61,4 +61,8 @@ public class Edge implements edge_data, Serializable{
 	public boolean getDraw() {
 		return Draw;
 	}
+	public boolean equals(Edge e) {
+		if(this.Src == e.Src && this.Dest == e.Dest && this.weight == e.weight){return true;}
+		else return false;
+	}
 }

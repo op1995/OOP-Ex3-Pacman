@@ -55,7 +55,7 @@ public class AutomaticGameClass{
 		boolean KML_flag = false;
 		myMovesCounter = 0;
 		game_service game = Game_Server.getServer(scenario_num); // input will be from [0,23] games
-
+		Game_Server.login(314949397);
 		String gameGraphString = game.getGraph();
 		gameGraph.init(gameGraphString);
 		GraphGUI  gui = new GraphGUI(gameGraph);
@@ -63,12 +63,20 @@ public class AutomaticGameClass{
 		String gameToString = game.toString();
 		JSONObject line;
 		try {
+			int kml_flag = Integer.valueOf(JOptionPane.showInputDialog("Type 0 if you want to get a KML file Or "
+					+"1 if you dont want a KML file."));
+			if(kml_flag == 0) {
+				KML_flag = true;
+			}
+			
+		} catch (Exception e) {}
+		try {
 			line = new JSONObject(gameToString);
 			JSONObject GameServerJson = line.getJSONObject("GameServer");
 			int amoutOfRobotsInGame = GameServerJson.getInt("robots"); //ttt.getInt("robots");
 			System.out.println("gameToString = " + gameToString);
 			System.out.println("gameGraphString = " + gameGraphString);
-			// the list of fruits should be considered in your solution
+			// the list of fruits should be considered in your solution.
 			gameGraph.Fruits.clear();
 			Iterator<String> fruits_iterator = game.getFruits().iterator();
 			List<String> gameFruitsList = game.getFruits();
@@ -96,13 +104,13 @@ public class AutomaticGameClass{
 		int refresh_rate = 105;
 		if(scenario_num==5) {refresh_rate=125;}
 		else if(scenario_num==23) {refresh_rate=60;} //different games need different moves count.
+		gui.scenario_num = scenario_num;
 		game.startGame();
+		KML_Logger kml = new KML_Logger(gameGraph, game,scenario_num);
 		if(KML_flag) {
-			KML_Logger kml = new KML_Logger(gameGraph, game,scenario_num);
 			Thread kmlThread = new Thread(kml);
 			kmlThread.start();
 		}
-
 		try {
 //			long lastUpdateTime = System.currentTimeMillis();
 			while(game.isRunning()) {
@@ -118,7 +126,6 @@ public class AutomaticGameClass{
 						}
 						moveRobots(game, gameGraph, gui);
 						gui.graphComponent.repaint();
-//						lastUpdateTime = System.currentTimeMillis();
 						Thread.sleep(refresh_rate);
 					} catch (Exception e) {}
 //				}
@@ -132,6 +139,10 @@ public class AutomaticGameClass{
 			finalGrade = "Game Over. Score : " + finalGrade;
 		} catch (JSONException e) {
 			e.printStackTrace();
+		}
+		if(KML_flag) {
+			String remark = kml.getKML_Data();
+			game.sendKML(remark); // Should be your KML (will not work on case -1).
 		}
 		JOptionPane.showMessageDialog(GraphGUI.frame, finalGrade);
 		System.out.println("Game Over: "+results);
@@ -165,6 +176,7 @@ public class AutomaticGameClass{
 						if(!pos.equals(gameGraph.Nodes.get(gameGraph.Robots.get(robotId).getSrc()).getLocation().toString())) {
 							continue;
 						}
+						
 						dest = nextNode(game,robotId,gameGraph);
 						game.chooseNextEdge(robotId, dest);
 						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));

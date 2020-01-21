@@ -8,12 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.swing.JOptionPane;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import Server.Game_Server;
 import Server.game_service;
 import Server.robot;
@@ -59,10 +56,8 @@ public class MyGameGUI{
 			System.exit(-1);
 		}
 
-		if(mode==0) {AutomaticGameClass.runAuto(new DGraph(), scenario_num);}
-		else {
-			runManual(new DGraph(), scenario_num);
-			}
+		if(mode==0) {AutomaticGameClass.runAuto(new DGraph(), scenario_num);		}
+		else {runManual(new DGraph(), scenario_num);}
 	}
 	/**
 	 * This method runs a user manual robot placement.
@@ -116,10 +111,8 @@ public class MyGameGUI{
 				gameGraph.Robots.get(robot).setisEating(false); //Initialize the game, so all the robots should be set to not eating mode
 			}
 		}
-		catch (JSONException e) {
-			// TODO: handle exception
-		}
-		JOptionPane.showMessageDialog(GraphGUI.frame, "click OK to start the game.");
+		catch (JSONException e) {}
+		JOptionPane.showMessageDialog(GraphGUI.frame, "Click OK to start the game.");
 		game.startGame();
 		long lastUpdateTime = System.currentTimeMillis();
 		gui.chooseRobot = true;

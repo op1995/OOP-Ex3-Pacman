@@ -83,7 +83,7 @@ public class Robot_Algo {
 		return null;
 	}
 	/**
-	 * 
+	 * This Method finds the closest Fruit to a given Robot.
 	 * @param robot
 	 * @param game
 	 * @param gameGraph

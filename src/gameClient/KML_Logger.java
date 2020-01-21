@@ -22,6 +22,7 @@ public class KML_Logger implements Runnable {
 	private int Timer;
 	private int Scenario_num;
 	private DGraph gameGraph;
+	private String KML_Data;
 	/**
 	 * A constructor.
 	 * @param graph
@@ -32,6 +33,7 @@ public class KML_Logger implements Runnable {
 		this.gameGraph= graph;
 		this.Game=game;
 		this.Scenario_num=scenario_num;
+		this.KML_Data = "";
 		if(game.timeToEnd()>30000)
 			this.Timer=70000;
 		else
@@ -83,6 +85,7 @@ public class KML_Logger implements Runnable {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+		this.KML_Data = KML_Info;
 		return KML_Info;
 	}
 	/**
@@ -190,6 +193,9 @@ public class KML_Logger implements Runnable {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+	}
+	public String getKML_Data() {
+		return this.KML_Data;
 	}
 	@Override
 	public void run() {

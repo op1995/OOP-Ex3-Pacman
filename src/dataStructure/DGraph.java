@@ -265,6 +265,7 @@ public class DGraph implements graph, Serializable{
 	}
 	public void addRobot(Robot r) {
 		this.Robots.put(r.getID(), r);
+		this.MC++;
 	}
 	public void addFruit(Fruit f) {
 		Robot_Algo R_Algo = new Robot_Algo(this);
@@ -274,6 +275,7 @@ public class DGraph implements graph, Serializable{
 			throw new RuntimeException("The given fruit doesn't belong to any Edge.");
 		}
 		f.setEdge(edge);
+		this.MC++;
 		this.Fruits.put(f,edge);
 	}
 	public void removeFruit(Fruit f) {
@@ -282,6 +284,16 @@ public class DGraph implements graph, Serializable{
 		}
 		this.Fruits.remove(f);
 	}
+//	public void removeFruitsinEdge(Edge e) {
+//		if (!(this.Edges.containsKey(e.getSrc()) && this.Edges.get(e.getSrc()).containsKey(e.getDest()))) {
+//			throw new RuntimeException("The given Edge doesn't belong to the Fruits in the Game");
+//		}
+//		for(Fruit f : Fruits.keySet()) {
+//			if(f.getEdge().equals(e)) {
+//				this.removeFruit(f);
+//			}
+//		}
+//	}
 	public void init(String graphJson) {
 		 try {
 			 	Nodes.clear();

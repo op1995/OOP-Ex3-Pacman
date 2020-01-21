@@ -30,228 +30,229 @@ import utils.Range;
  *  @author Ibrahem Chahine, Ofir Peller.
  */
 public class GraphComponent extends JComponent{
-	  private static final long serialVersionUID = -4822415017845138079L;
-	
-	 /** The radius of the circle to draw for a node. */
-	  public static final int NODE_RADIUS = 10;
-	
-	  /** The diameter of the circle to draw for a node. */
-	  public static final int NODE_DIAMETER = 2 * NODE_RADIUS;
-	
-	  /** The length of a stroke of an arrow head. */
-	  public static final int ARROW_HEAD_LENGTH = 15;
-	
-	  /** The angle of the stroke of an arrow head with respect to the line. */
-	  public static final double ARROW_ANGLE = 9.0*Math.PI/10.0;
-	  /** 
-	   *  The graph to draw.  Note that this graph is based on the Node and Edge classes,
-	   *  so the data associated with a node includes its key ,position and color.
-	   */
-	  DGraph graph;
-	  private int width;
-	  private int height;
-	  private Range rangex;
-	  private Range rangey;
-	  
-	  /** 
-	   *  Constructor.
+	private static final long serialVersionUID = -4822415017845138079L;
+
+	/** The radius of the circle to draw for a node. */
+	public static final int NODE_RADIUS = 10;
+
+	/** The diameter of the circle to draw for a node. */
+	public static final int NODE_DIAMETER = 2 * NODE_RADIUS;
+
+	/** The length of a stroke of an arrow head. */
+	public static final int ARROW_HEAD_LENGTH = 15;
+
+	/** The angle of the stroke of an arrow head with respect to the line. */
+	public static final double ARROW_ANGLE = 9.0*Math.PI/10.0;
+	/** 
+	 *  The graph to draw.  Note that this graph is based on the Node and Edge classes,
+	 *  so the data associated with a node includes its key ,position and color.
+	 */
+	DGraph graph;
+	int width;
+	int height;
+	private Range rangex;
+	private Range rangey;
+
+	/** 
+	 *  Constructor.
 	 * @param Graph 
-	   *
-	   *  @param graphWithPlacement - the graph to draw
-	   */
-	  public GraphComponent(DGraph Graph) {
-	    this.graph = Graph;
-	    setSize(new Dimension(1100, 700));
-	    setPreferredSize(new Dimension(1100, 700));
-	    rangex=new Range(35.1850,35.2150);
+	 *
+	 *  @param graphWithPlacement - the graph to draw
+	 */
+	public GraphComponent(DGraph Graph) {
+		this.graph = Graph;
+		this.width=1100;
+		this.height=700;
+		setSize(new Dimension(width, height));
+		setPreferredSize(new Dimension(width, height));
+		rangex=new Range(35.1850,35.2150);
 		rangey=new Range(32.0950, 32.1130);
-		width=1100;
-		height=700;
-	  }
-	  /**
-	   * This method paints the nodes of this Graph.
-	   * @param g Graphics.
-	   */
-	  public void paintNodes(Graphics g) {
-		  	double X=width/rangex.get_length();
-			double Y=(0-height)/rangey.get_length();
-			for(int v : this.graph.Nodes.keySet()) {
+		
+	}
+	/**
+	 * This method paints the nodes of this Graph.
+	 * @param g Graphics.
+	 */
+	public void paintNodes(Graphics g) {
+		double X=width/rangex.get_length();
+		double Y=(0-height)/rangey.get_length();
+		for(int v : this.graph.Nodes.keySet()) {
+			int x0= (int) ((graph.getNodes().get(v).getLocation().x()-rangex.get_min())*X);
+			int y0=(int) ((graph.getNodes().get(v).getLocation().y()-rangey.get_max())*Y);
+			g.setColor(Color.yellow);
+			g.fillOval(x0 - NODE_RADIUS, y0 - NODE_RADIUS, NODE_DIAMETER, NODE_DIAMETER);
+			g.setColor(Color.black);
+			g.drawString(String.valueOf(v), x0-NODE_RADIUS, y0-NODE_RADIUS);
+		}
+	}
+	/**
+	 * This method paints the Edges if this Graph.
+	 * @param g Graphics.
+	 * @param x0 The x position of the source node of an edge.
+	 * @param y0 The y position of the source node of an edge.
+	 * @param x1 The x position of the destination node of an edge.
+	 * @param y1 The y position of the destination node of an edge.
+	 * @param theta The angle of edge's arrow.
+	 * @param edgeX The the x position of the edge.
+	 * @param edgeX The the y position of the edge.
+	 * @param arrowHead A polygon for the arrow head.
+	 */
+	public void paintEdges(Graphics g) {
+		double X=width/rangex.get_length();
+		double Y=(0-height)/rangey.get_length();
+		for(int v : this.graph.Nodes.keySet()) {
+			for(int u : this.graph.Edges.get(v).keySet()) {
 				int x0= (int) ((graph.getNodes().get(v).getLocation().x()-rangex.get_min())*X);
 				int y0=(int) ((graph.getNodes().get(v).getLocation().y()-rangey.get_max())*Y);
-				g.setColor(Color.yellow);
-				g.fillOval(x0 - NODE_RADIUS, y0 - NODE_RADIUS, NODE_DIAMETER, NODE_DIAMETER);
-				g.setColor(Color.black);
-				g.drawString(String.valueOf(v), x0-NODE_RADIUS, y0-NODE_RADIUS);
+				int x1=(int) ((graph.getNodes().get(u).getLocation().x()-rangex.get_min())*X);
+				int y1=(int) ((graph.getNodes().get(u).getLocation().y()-rangey.get_max())*Y);
+				g.setColor(Color.BLUE);
+				g.drawLine(x0, y0, x1, y1);
+				g.setColor(Color.CYAN);
+				double theta = Math.atan2(y1 - y0, x1 - x0);  // angle of edge's arrow
+				double edgeX = x1 - Math.cos(theta)*NODE_RADIUS+1;
+				double edgeY = y1 - Math.sin(theta)*NODE_RADIUS+1;
+				double arrowX1 = edgeX + Math.cos(theta-ARROW_ANGLE)*ARROW_HEAD_LENGTH;
+				double arrowY1 = edgeY + Math.sin(theta-ARROW_ANGLE)*ARROW_HEAD_LENGTH;
+				double arrowX2 = edgeX + Math.cos(theta+ARROW_ANGLE) * ARROW_HEAD_LENGTH;
+				double arrowY2 = edgeY + Math.sin(theta+ARROW_ANGLE) * ARROW_HEAD_LENGTH;
+				Polygon arrowHead = new Polygon(new int[]{(int)Math.round(edgeX),
+						(int)Math.round(arrowX1),
+						(int)Math.round(arrowX2)},
+						new int[]{(int)Math.round(edgeY),
+								(int)Math.round(arrowY1),
+								(int)Math.round(arrowY2)}, 3);
+				g.fillPolygon(arrowHead);
+				g.setColor(Color.RED);
+				double Weight=graph.getEdges().get(v).get(u).getWeight();
+				Weight = (double) ((int) (Weight * 10)) / (10);
+				g.drawString(Double.toString(Weight), x1*75/100 + x0*1/4, y1*75/100 + y0*1/4);
 			}
-	  }
-	  /**
-	   * This method paints the Edges if this Graph.
-	   * @param g Graphics.
-	   * @param x0 The x position of the source node of an edge.
-	   * @param y0 The y position of the source node of an edge.
-	   * @param x1 The x position of the destination node of an edge.
-	   * @param y1 The y position of the destination node of an edge.
-	   * @param theta The angle of edge's arrow.
-	   * @param edgeX The the x position of the edge.
-	   * @param edgeX The the y position of the edge.
-	   * @param arrowHead A polygon for the arrow head.
-	   */
-	  public void paintEdges(Graphics g) {
-		  double X=width/rangex.get_length();
-			double Y=(0-height)/rangey.get_length();
-			for(int v : this.graph.Nodes.keySet()) {
-				for(int u : this.graph.Edges.get(v).keySet()) {
-					int x0= (int) ((graph.getNodes().get(v).getLocation().x()-rangex.get_min())*X);
-					int y0=(int) ((graph.getNodes().get(v).getLocation().y()-rangey.get_max())*Y);
-					int x1=(int) ((graph.getNodes().get(u).getLocation().x()-rangex.get_min())*X);
-					int y1=(int) ((graph.getNodes().get(u).getLocation().y()-rangey.get_max())*Y);
-					g.setColor(Color.BLUE);
-					g.drawLine(x0, y0, x1, y1);
-					g.setColor(Color.CYAN);
-					double theta = Math.atan2(y1 - y0, x1 - x0);  // angle of edge's arrow
-					double edgeX = x1 - Math.cos(theta)*NODE_RADIUS+1;
-					double edgeY = y1 - Math.sin(theta)*NODE_RADIUS+1;
-					double arrowX1 = edgeX + Math.cos(theta-ARROW_ANGLE)*ARROW_HEAD_LENGTH;
-				    double arrowY1 = edgeY + Math.sin(theta-ARROW_ANGLE)*ARROW_HEAD_LENGTH;
-				    double arrowX2 = edgeX + Math.cos(theta+ARROW_ANGLE) * ARROW_HEAD_LENGTH;
-				    double arrowY2 = edgeY + Math.sin(theta+ARROW_ANGLE) * ARROW_HEAD_LENGTH;
-				    Polygon arrowHead = new Polygon(new int[]{(int)Math.round(edgeX),
-				                                              (int)Math.round(arrowX1),
-				                                              (int)Math.round(arrowX2)},
-				                                    new int[]{(int)Math.round(edgeY),
-				                                              (int)Math.round(arrowY1),
-				                                              (int)Math.round(arrowY2)}, 3);
-				    g.fillPolygon(arrowHead);
-				    g.setColor(Color.RED);
-					double Weight=graph.getEdges().get(v).get(u).getWeight();
-					Weight = (double) ((int) (Weight * 10)) / (10);
-					g.drawString(Double.toString(Weight), x1*75/100 + x0*1/4, y1*75/100 + y0*1/4);
-				}
-			}
-	  }
-	  /**
-	   * This method paint the Robots of this graph.
-	   * @param r An ID of a robot in this Graph.
-	   * @param x the x position of a Robot in the Graph.
-	   * @param y the y position of a Robot in the Graph.
-	   * @param image The image of the robot to paint.
-	   * @param g Graphics.
-	   */
-	  public void paintRobots(Graphics g) {
-		  	double X=width/rangex.get_length();
-			double Y=(0-height)/rangey.get_length();
-			for (int r : this.graph.Robots.keySet()) {
-				int x = (int) ((graph.Robots.get(r).getPos().x()-rangex.get_min())*X);
-				int y = (int) ((graph.Robots.get(r).getPos().y()-rangey.get_max())*Y);
+		}
+	}
+	/**
+	 * This method paint the Robots of this graph.
+	 * @param r An ID of a robot in this Graph.
+	 * @param x the x position of a Robot in the Graph.
+	 * @param y the y position of a Robot in the Graph.
+	 * @param image The image of the robot to paint.
+	 * @param g Graphics.
+	 */
+	public void paintRobots(Graphics g) {
+		double X=width/rangex.get_length();
+		double Y=(0-height)/rangey.get_length();
+		for (int r : this.graph.Robots.keySet()) {
+			int x = (int) ((graph.Robots.get(r).getPos().x()-rangex.get_min())*X);
+			int y = (int) ((graph.Robots.get(r).getPos().y()-rangey.get_max())*Y);
+			try {
+				BufferedImage image = ImageIO.read(new File("pics\\pacman1.gif"));
+				g.drawImage(image.getScaledInstance(NODE_RADIUS*5, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
+				g.setColor(Color.BLACK);
+				//					g.drawString(String.valueOf(graph.Robots.get(r).getDest()), x-NODE_RADIUS, y-NODE_RADIUS);
+				g.setColor(Color.RED);
+				g.drawString(graph.Robots.get(r).getPathToFruit().toString(), x-NODE_RADIUS, y-NODE_RADIUS);
+
+			} catch (IOException e) {
 				try {
-					BufferedImage image = ImageIO.read(new File("pics\\pacman1.gif"));
+					//						System.out.println("Couldn't find picture pacman1.gif. Trying linux path instead.");
+					BufferedImage image = ImageIO.read(new File("pics/pacman1.gif"));
 					g.drawImage(image.getScaledInstance(NODE_RADIUS*5, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
 					g.setColor(Color.BLACK);
-//					g.drawString(String.valueOf(graph.Robots.get(r).getDest()), x-NODE_RADIUS, y-NODE_RADIUS);
-					g.setColor(Color.RED);
-					g.drawString(graph.Robots.get(r).getPathToFruit().toString(), x-NODE_RADIUS, y-NODE_RADIUS);
+				}catch (IOException f) {System.out.println(f);}
+			}
+		}
 
-				} catch (IOException e) {
+	}
+	/**
+	 * This method paint the Robots of this graph.
+	 * @param f A Fruit in this Graph.
+	 * @param x the x position of a Fruit in the Graph.
+	 * @param y the y position of a Fruit in the Graph.
+	 * @param image The image of the Fruit to paint.
+	 * @param g Graphics.
+	 */
+	public void paintFruits(Graphics g) {
+		double X=width/rangex.get_length();
+		double Y=(0-height)/rangey.get_length();
+		for(Fruit f : this.graph.Fruits.keySet()) {
+			int x = (int) ((f.getPos().x()-rangex.get_min())*X);
+			int y = (int) ((f.getPos().y()-rangey.get_max())*Y);
+			if(f.getType() == -1) {
+				try {
+					BufferedImage image = ImageIO.read(new File("pics\\orange.gif"));
+					g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
+					g.setColor(Color.BLACK);
+				}
+				catch (IOException e) {
 					try {
-//						System.out.println("Couldn't find picture pacman1.gif. Trying linux path instead.");
-						BufferedImage image = ImageIO.read(new File("pics/pacman1.gif"));
-						g.drawImage(image.getScaledInstance(NODE_RADIUS*5, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
+						//							System.out.println("Couldn't find picture orange.gif. Trying linux path instead.");
+						BufferedImage image = ImageIO.read(new File("pics/orange.gif"));
+						g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
 						g.setColor(Color.BLACK);
-					}catch (IOException f) {System.out.println(f);}
+					}
+					catch (IOException f1) {System.out.println(f1);}
 				}
 			}
-			
-		}
-	  /**
-	   * This method paint the Robots of this graph.
-	   * @param f A Fruit in this Graph.
-	   * @param x the x position of a Fruit in the Graph.
-	   * @param y the y position of a Fruit in the Graph.
-	   * @param image The image of the Fruit to paint.
-	   * @param g Graphics.
-	   */
-	  public void paintFruits(Graphics g) {
-		  double X=width/rangex.get_length();
-	 	  double Y=(0-height)/rangey.get_length();
-		  for(Fruit f : this.graph.Fruits.keySet()) {
-		    	int x = (int) ((f.getPos().x()-rangex.get_min())*X);
-				int y = (int) ((f.getPos().y()-rangey.get_max())*Y);
-				if(f.getType() == -1) {
+			else {
+				try {
+					BufferedImage image = ImageIO.read(new File("pics\\apple.gif"));
+					g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
+					g.setColor(Color.BLACK);
+				}
+				catch (IOException e) {
 					try {
-						BufferedImage image = ImageIO.read(new File("pics\\orange.gif"));
+						//							System.out.println("Couldn't find picture apple.gif. Trying linux path instead.");
+						BufferedImage image = ImageIO.read(new File("pics/apple.gif"));
 						g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
 						g.setColor(Color.BLACK);
 					}
-					catch (IOException e) {
-						try {
-//							System.out.println("Couldn't find picture orange.gif. Trying linux path instead.");
-							BufferedImage image = ImageIO.read(new File("pics/orange.gif"));
-							g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
-							g.setColor(Color.BLACK);
-						}
-						catch (IOException f1) {System.out.println(f1);}
-					}
+					catch (IOException f1) {System.out.println(f1);}
 				}
-				else {
-					try {
-						BufferedImage image = ImageIO.read(new File("pics\\apple.gif"));
-						g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
-						g.setColor(Color.BLACK);
-					}
-					catch (IOException e) {
-						try {
-//							System.out.println("Couldn't find picture apple.gif. Trying linux path instead.");
-							BufferedImage image = ImageIO.read(new File("pics/apple.gif"));
-							g.drawImage(image.getScaledInstance(NODE_RADIUS*3, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
-							g.setColor(Color.BLACK);
-						}
-						catch (IOException f1) {System.out.println(f1);}
-					}
-				}
+			}
 
 		}
 	}
-	  /**
-	   * This method paint this Graph.
-	   */
-	  public void paint(Graphics g){
-		  try {
-			  paintEdges(g);
-			  paintNodes(g);
-			  paintFruits(g);
-			  paintRobots(g);
-//			  g.drawString(graph.Fruits.toString(), 0, 10);
+	/**
+	 * This method paint this Graph.
+	 */
+	public void paint(Graphics g){
+		try {
+			paintEdges(g);
+			paintNodes(g);
+			paintFruits(g);
+			paintRobots(g);
+			//			  g.drawString(graph.Fruits.toString(), 0, 10);
 		} catch (Exception e) {}
-			
-	  }
-	  /**
-	   * This method save an image to file.
-	   * @param name The file name.
-	   * @param type The type of the file.
-	   */
-	  public void saveImage(String name,String type) {
-		  	BufferedImage image = new BufferedImage(getWidth(),getHeight(), BufferedImage.TYPE_3BYTE_BGR);
-			Graphics2D g2 = image.createGraphics();
-			paint(g2);
-			try{
-				ImageIO.write(image, type, new File(name+"."+type));
+
+	}
+	/**
+	 * This method save an image to file.
+	 * @param name The file name.
+	 * @param type The type of the file.
+	 */
+	public void saveImage(String name,String type) {
+		BufferedImage image = new BufferedImage(getWidth(),getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+		Graphics2D g2 = image.createGraphics();
+		paint(g2);
+		try{
+			ImageIO.write(image, type, new File(name+"."+type));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	  /**
-		 * 
-		 * @param data denote some data to be scaled
-		 * @param r_min the minimum of the range of your data
-		 * @param r_max the maximum of the range of your data
-		 * @param t_min the minimum of the range of your desired target scaling
-		 * @param t_max the maximum of the range of your desired target scaling
-		 * @return
-		 */
-		private double scale(double data, double r_min, double r_max, double t_min, double t_max)
-		{
-			double res = ((data - r_min) / (r_max-r_min)) * (t_max - t_min) + t_min;
-			return res;
-		}
-	  }
-	
+	/**
+	 * 
+	 * @param data denote some data to be scaled
+	 * @param r_min the minimum of the range of your data
+	 * @param r_max the maximum of the range of your data
+	 * @param t_min the minimum of the range of your desired target scaling
+	 * @param t_max the maximum of the range of your desired target scaling
+	 * @return
+	 */
+	private double scale(double data, double r_min, double r_max, double t_min, double t_max)
+	{
+		double res = ((data - r_min) / (r_max-r_min)) * (t_max - t_min) + t_min;
+		return res;
+	}
+}
+
