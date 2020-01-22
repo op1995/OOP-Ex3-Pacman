@@ -52,7 +52,12 @@ public class GraphComponent extends JComponent{
 	int height;
 	private Range rangex;
 	private Range rangey;
-
+	public int gameLevel;
+	public int MyGrade;
+	public int grade;
+	public static String Info;
+	public ArrayList<Integer> ScoresInScenario;
+	public HashMap<Integer, HashMap<Integer,Integer>> scores;
 	/** 
 	 *  Constructor.
 	 * @param Graph 
@@ -60,13 +65,19 @@ public class GraphComponent extends JComponent{
 	 *  @param graphWithPlacement - the graph to draw
 	 */
 	public GraphComponent(DGraph Graph) {
+		SimpleDB DB = new SimpleDB();
+		this.gameLevel = 0;
+		this.ScoresInScenario = new ArrayList<Integer>();
 		this.graph = Graph;
 		this.width=1100;
 		this.height=700;
+		this.grade = 0;
 		setSize(new Dimension(width, height));
 		setPreferredSize(new Dimension(width, height));
 		rangex=new Range(35.1850,35.2150);
 		rangey=new Range(32.0950, 32.1130);
+		DB.UpdateScores();
+		this.scores = DB.getScores();
 		
 	}
 	/**
@@ -144,8 +155,8 @@ public class GraphComponent extends JComponent{
 		for (int r : this.graph.Robots.keySet()) {
 			int x = (int) ((graph.Robots.get(r).getPos().x()-rangex.get_min())*X);
 			int y = (int) ((graph.Robots.get(r).getPos().y()-rangey.get_max())*Y);
-			g.setColor(Color.RED);
-			g.drawString(graph.Robots.get(r).getPathToFruit().toString(), x-NODE_RADIUS, y-NODE_RADIUS);
+			//			g.setColor(Color.RED);
+			//			g.drawString(graph.Robots.get(r).getPathToFruit().toString(), x-NODE_RADIUS, y-NODE_RADIUS);
 			try {
 				BufferedImage image = ImageIO.read(new File("pics\\pacman1.gif"));
 				g.drawImage(image.getScaledInstance(NODE_RADIUS*5, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
@@ -175,16 +186,16 @@ public class GraphComponent extends JComponent{
 	public void paintFruits(Graphics g) {
 		double X=width/rangex.get_length();
 		double Y=(0-height)/rangey.get_length();
-//		for(Fruit f : this.graph.Fruits.keySet()) {
+		//		for(Fruit f : this.graph.Fruits.keySet()) {
 		for (int i = 0; i < graph.Fruits.length; i++) {
 			if(graph.Fruits[i]==null) {continue;}
 			Fruit f = graph.Fruits[i];
-			
+
 			int x = (int) ((f.getPos().x()-rangex.get_min())*X);
 			int y = (int) ((f.getPos().y()-rangey.get_max())*Y);
-			String isAlive = "FALSE";
-			if(f.getisAlive()) {isAlive="TRUE";}
-			g.drawString(isAlive, x-NODE_DIAMETER, y-NODE_DIAMETER);
+			//			String isAlive = "FALSE";
+			//			if(f.getisAlive()) {isAlive="TRUE";}
+			//			g.drawString(isAlive, x-NODE_DIAMETER, y-NODE_DIAMETER);
 			if(f.getType() == -1) {
 				try {
 					BufferedImage image = ImageIO.read(new File("pics\\orange.gif"));
@@ -225,12 +236,30 @@ public class GraphComponent extends JComponent{
 	 */
 	public void paint(Graphics g){
 		try {
+
 			paintEdges(g);
 			paintNodes(g);
 			paintFruits(g);
 			paintRobots(g);
-			//			  g.drawString(graph.Fruits.toString(), 0, 10);
-		} catch (Exception e) {}
+			g.setColor(Color.BLACK);
+			if(this.scores.get(315554022).containsKey(this.gameLevel)) {
+				this.MyGrade = this.scores.get(315554022).get(this.gameLevel);
+//				Collections.sort( this.ScoresInScenario.indexOf(this.MyGrade) );
+				for(int i : scores.keySet()) {
+					if(!this.ScoresInScenario.contains(scores.get(i).get(gameLevel))){
+						this.ScoresInScenario.add(scores.get(i).get(gameLevel));
+					}
+				}
+				Info = "Score : "+String.valueOf(this.grade)+ "      Scenario : " + String.valueOf(this.gameLevel) +
+						"    Rank In This scenario :" + String.valueOf(this.ScoresInScenario.indexOf(this.MyGrade))
+						+ "   Number of played games in the Server : " + String.valueOf(scores.get(315554022).size());
+				g.drawString(Info, 10, 10);
+			}
+			else {
+				Info = "Score : "+String.valueOf(this.grade)+ "      Scenario : " + String.valueOf(this.gameLevel);
+				g.drawString(Info, 10, 10);
+			}
+		} catch (Exception e) {e.printStackTrace();}
 
 	}
 	/**
@@ -248,19 +277,11 @@ public class GraphComponent extends JComponent{
 			e.printStackTrace();
 		}
 	}
-	/**
-	 * 
-	 * @param data denote some data to be scaled
-	 * @param r_min the minimum of the range of your data
-	 * @param r_max the maximum of the range of your data
-	 * @param t_min the minimum of the range of your desired target scaling
-	 * @param t_max the maximum of the range of your desired target scaling
-	 * @return
-	 */
-	private double scale(double data, double r_min, double r_max, double t_min, double t_max)
-	{
-		double res = ((data - r_min) / (r_max-r_min)) * (t_max - t_min) + t_min;
-		return res;
+	public void setGameLevel(int l) {
+		if(l>23 || l<0) {
+			throw new RuntimeException("Please pick a scenario between 0 to 23");
+		}
+		this.gameLevel = l;
 	}
 }
 

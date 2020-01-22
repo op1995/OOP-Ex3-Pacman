@@ -27,11 +27,10 @@ public class DGraph implements graph, Serializable{
 	public HashMap<Integer, Node> Nodes;
 	public HashMap<Integer, HashMap<Integer,Edge>> Edges;
 	public HashMap<Integer, Robot> Robots;
-//	public  HashMap<Fruit, Edge> Fruits;
 	public  Fruit[] Fruits;
 	private int EdgeCount;
 	private int MC;
-	/*
+	/**
 	 * A default constructor.
 	 */
 	public DGraph() {
@@ -43,7 +42,7 @@ public class DGraph implements graph, Serializable{
 		this.EdgeCount = 0;
 		this.MC = 0;
 	}
-	/*
+	/**
 	 * A constructor.
 	 */
 	public DGraph(HashMap<Integer, Node> nodes, HashMap<Integer, HashMap<Integer,Edge>> edges) {
@@ -59,7 +58,7 @@ public class DGraph implements graph, Serializable{
 			}
 		}
 	}
-	/*
+	/**
 	 * This method returns the node that belongs to the given key.
 	 * Important: 
 	 * 			-If the key deosn't belong to a node in the graph a RuntimeException will be thrown. 
@@ -72,7 +71,7 @@ public class DGraph implements graph, Serializable{
 		}
 		return Nodes.get(key);
 	}
-	/*
+	/**
 	 * This method returns the edge that belongs to the given source and destination keys.
 	 * * Important: 
 	 * 			-If the source and destination keys deosn't belong to an edge in the graph a RuntimeException will be thrown. 
@@ -104,7 +103,7 @@ public class DGraph implements graph, Serializable{
 		this.Edges.put(n.getKey(), edge);
 		this.MC++;
 	}
-	/*
+	/**
 	 * This method creates an edge between two nodes, a source node and a destination node, and sets the weight of the edge.
 	 * 
 	 * Example: If this function was called with these values connect(10,11,100) and lets assume the keys belong to a node 
@@ -148,7 +147,7 @@ public class DGraph implements graph, Serializable{
 		EdgeCount++;
 		MC++;
 	}
-	/*
+	/**
 	 * This method returns a shallow copy of the collection of nodes in the graph.
 	 * @param shallowcopy the copy.
 	 * @return a shallow copy of the nodes.
@@ -161,7 +160,7 @@ public class DGraph implements graph, Serializable{
 		}
 		return shallowcopy;
 	}
-	/*
+	/**
 	 * This method returns a shallow copy of the collection of edges that belong to a node in the graph.
 	 * Important:
 	 * 			-If the Given key doesn't belong to any node in the graph a RuntimeException will be thrown.
@@ -187,7 +186,7 @@ public class DGraph implements graph, Serializable{
 		HashMap<Integer, Edge> Copy = (HashMap<Integer ,Edge>) this.Edges.get(node_id);
 		return Copy;
 	}
-	/*
+	/**
 	 * This method removes the node that belongs to the given key from the graph.
 	 * Important: 
 	 * 			1. if the given key doesn't belong to a node in the graph a RuntimeException will be thrown.
@@ -216,7 +215,7 @@ public class DGraph implements graph, Serializable{
 		MC++;
 		return node;
 	}
-	/*
+	/**
 	 * This method removes an edge that belongs to the nodes of the given keys.
 	 * Important: 
 	 * 			-If the given keys deosn't belong to an edge in the graph a RuntimeException will be thrown.
@@ -237,7 +236,7 @@ public class DGraph implements graph, Serializable{
 		MC++;
 		return Edge;
 	}
-	/*
+	/**
 	 * This method returns the number of nodes in the graph.
 	 * @return the number of nodes in the graph.
 	 */
@@ -245,7 +244,7 @@ public class DGraph implements graph, Serializable{
 	public int nodeSize() {
 		return this.Nodes.size();
 	}
-	/*
+	/**
 	 * This method returns the number of edges in the graph.
 	 * @return the number of edges in the graph.
 	 */
@@ -253,7 +252,7 @@ public class DGraph implements graph, Serializable{
 	public int edgeSize() {
 		return this.EdgeCount;
 	}
-	/*
+	/**
 	 * This method returns the number of changes in the graph.
 	 * @return the number of changes in the graph.
 	 */
@@ -269,6 +268,10 @@ public class DGraph implements graph, Serializable{
 		this.Robots.put(r.getID(), r);
 		this.MC++;
 	}
+	/**
+	 * This method adds a fruit to thew graph.
+	 * @param f
+	 */
 	public void addFruit(Fruit f) {
 		Robot_Algo R_Algo = new Robot_Algo(this);
 		Edge edge = R_Algo.findEdge(f);
@@ -286,6 +289,10 @@ public class DGraph implements graph, Serializable{
 			}
 		}
 	}
+	/**
+	 * This method removes a fruit from a graph.
+	 * @param f the Fruit to remove.
+	 */
 	public void removeFruit(Fruit f) {
 		boolean found = false;
 		for (int i = 0; i < Fruits.length && !found; i++) {
@@ -297,22 +304,11 @@ public class DGraph implements graph, Serializable{
 		if(!found) {
 			throw new RuntimeException("The given Fruit doesn't belong to the Fruits in the Game");
 		}
-		
-//		if (!this.Fruits.containsKey(f)) {
-//			throw new RuntimeException("The given Fruit doesn't belong to the Fruits in the Game");
-//		}
-//		this.Fruits.remove(f);
 	}
-//	public void removeFruitsinEdge(Edge e) {
-//		if (!(this.Edges.containsKey(e.getSrc()) && this.Edges.get(e.getSrc()).containsKey(e.getDest()))) {
-//			throw new RuntimeException("The given Edge doesn't belong to the Fruits in the Game");
-//		}
-//		for(Fruit f : Fruits.keySet()) {
-//			if(f.getEdge().equals(e)) {
-//				this.removeFruit(f);
-//			}
-//		}
-//	}
+	/**
+	 * This method inits a Graph from a Json file.
+	 * @param graphJson A json that represents the graph.
+	 */
 	public void init(String graphJson) {
 		 try {
 			 	Nodes.clear();

@@ -23,6 +23,7 @@ public class KML_Logger implements Runnable {
 	private int Scenario_num;
 	private DGraph gameGraph;
 	private String KML_Data;
+	public String KML_Info;
 	/**
 	 * A constructor.
 	 * @param graph
@@ -34,6 +35,7 @@ public class KML_Logger implements Runnable {
 		this.Game=game;
 		this.Scenario_num=scenario_num;
 		this.KML_Data = "";
+		this.KML_Info = "";
 		if(game.timeToEnd()>30000)
 			this.Timer=70000;
 		else
@@ -45,7 +47,7 @@ public class KML_Logger implements Runnable {
 	 * @return String that represents the game in a KML.
 	 */
 	public String createKMLfile() {
-		String KML_Info=
+		KML_Info=
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" + 
 						"<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\r\n"
 						+ "<Document>\n" + 
