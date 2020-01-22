@@ -28,6 +28,9 @@ import oop_dataStructure.oop_graph;
 import utils.Point3D;
 
 public class AutomaticGameClass{
+	
+	static int amoutOfRobotsInGame = 0;
+	
 	/**
 	 * This class is for the automatic robot playing. 
 	 */
@@ -54,7 +57,7 @@ public class AutomaticGameClass{
 	 * @param lastUpdateTime The local time.
 	 */
 	public static void runAuto(DGraph gameGraph , int scenario_num) {
-//		long now = System.currentTimeMillis();
+		//		long now = System.currentTimeMillis();
 		boolean KML_flag = false;
 		myMovesCounter = 0;
 		game_service game = Game_Server.getServer(scenario_num); // input will be from [0,23] games
@@ -73,14 +76,15 @@ public class AutomaticGameClass{
 			}
 
 		} catch (Exception e) {}
+//		int amoutOfRobotsInGame = 0;
 		try {
 			line = new JSONObject(gameToString);
 			JSONObject GameServerJson = line.getJSONObject("GameServer");
-			int amoutOfRobotsInGame = GameServerJson.getInt("robots"); //ttt.getInt("robots");
+			amoutOfRobotsInGame = GameServerJson.getInt("robots"); //ttt.getInt("robots");
 			System.out.println("gameToString = " + gameToString);
 			System.out.println("gameGraphString = " + gameGraphString);
 			// the list of fruits should be considered in your solution.
-//			gameGraph.Fruits.clear();
+			//			gameGraph.Fruits.clear();
 			gameGraph.Fruits = new Fruit[15];
 			Iterator<String> fruits_iterator = game.getFruits().iterator();
 			List<String> gameFruitsList = game.getFruits();
@@ -116,84 +120,93 @@ public class AutomaticGameClass{
 			kmlThread.start();
 		}
 
-		repaintGUIClass _repaintGUIClass = new repaintGUIClass(game,gameGraph,gui);
-		Thread repaintThread = new Thread(_repaintGUIClass);
-		repaintThread.start();
-		
-//		fruitsRefresher _fruitsRefresher = new fruitsRefresher(game,gameGraph,gui);
-//		Thread fruitsRefreshThread = new Thread(_fruitsRefresher);
-//		fruitsRefreshThread.start();
-		
-		
-		
-//		Robot_Algo _RobotAlgo = new Robot_Algo(gameGraph);
+		if(amoutOfRobotsInGame>1) {
+			repaintGUIClass _repaintGUIClass = new repaintGUIClass(game,gameGraph,gui);
+			Thread repaintThread = new Thread(_repaintGUIClass);
+			repaintThread.start();
+		}
+
+
+		//		fruitsRefresher _fruitsRefresher = new fruitsRefresher(game,gameGraph,gui);
+		//		Thread fruitsRefreshThread = new Thread(_fruitsRefresher);
+		//		fruitsRefreshThread.start();
+
+
+
+		//		Robot_Algo _RobotAlgo = new Robot_Algo(gameGraph);
 		try {
 			//long lastUpdateTime = System.currentTimeMillis();
 			while(game.isRunning()) {
 				//				if(System.currentTimeMillis() - lastUpdateTime >= refresh_rate) { //if enough time has passed (50 milliseconds) 
 				try {
-					
-					
-					
-					
-//					HashMap<Fruit, Edge> UpdatedFruitsList = new HashMap<Fruit, Edge>();
-//					Iterator<String> _f_iter = game.getFruits().iterator();
-//					while(_f_iter.hasNext()) {
-//						try {
-//							Fruit f = new Fruit(_f_iter.next());
-//							f.setEdge(_RobotAlgo.findEdge(f));
-//							UpdatedFruitsList.put(f, f.getEdge());
-//						}
-//						catch (Exception e) {
-//							System.err.println("Error in refreshong the fruits");
-//							e.printStackTrace();
-//						}
-//					}
-//
-//					//first, check for every fruit in my OWN list, if they exist in the freshly fetched fruits list from the server.
-//					//if so, leave them alone.
-//					//otherwise, delete them. They were already eaten.
-//
-//					for(Fruit f2: gameGraph.Fruits.keySet()) {
-//						boolean found_dontDeleteMe = false;
-//
-//						for(Fruit f: UpdatedFruitsList.keySet()) {
-//							if(f.toString().equals(f2.toString())) {
-//								found_dontDeleteMe = true;
-//								UpdatedFruitsList.remove(f); //this fruit has already found a match in our OWN fruits list. No need to check it again.
-//							}
-//						}
-//						if(!found_dontDeleteMe) {// if you didn't find this fruit from my OWN list, kill it. It was already eaten.
-//							gameGraph.Fruits.remove(f2);
-//						}
-//					}
-//
-//					//now, every fruit still remaining in the UpdatedFruitsList is a new one,
-//					//as we removed the ones that we got from the server, but were already in our OWN list.
-//					//So - we should add the remaining ones on that list.
-//
-//					for(Fruit f: UpdatedFruitsList.keySet()) {
-//						gameGraph.addFruit(f);
-//					}
-//
-//
-//
-//
-//
-					//					gameGraph.Fruits.clear();
-					//					Iterator<String> f_iter = game.getFruits().iterator();
-					//					while(f_iter.hasNext()) {
-					//						try {
-					//							Fruit f = new Fruit(f_iter.next());
-					//							gameGraph.addFruit(f);
-					//						} catch (Exception e) {}
-					//					}
 
-//					repaintThread = new Thread(_repaintGUIClass);
-//					repaintThread.run();
-//					long now = System.currentTimeMillis();
+
+
+
+					//					HashMap<Fruit, Edge> UpdatedFruitsList = new HashMap<Fruit, Edge>();
+					//					Iterator<String> _f_iter = game.getFruits().iterator();
+					//					while(_f_iter.hasNext()) {
+					//						try {
+					//							Fruit f = new Fruit(_f_iter.next());
+					//							f.setEdge(_RobotAlgo.findEdge(f));
+					//							UpdatedFruitsList.put(f, f.getEdge());
+					//						}
+					//						catch (Exception e) {
+					//							System.err.println("Error in refreshong the fruits");
+					//							e.printStackTrace();
+					//						}
+					//					}
+					//
+					//					//first, check for every fruit in my OWN list, if they exist in the freshly fetched fruits list from the server.
+					//					//if so, leave them alone.
+					//					//otherwise, delete them. They were already eaten.
+					//
+					//					for(Fruit f2: gameGraph.Fruits.keySet()) {
+					//						boolean found_dontDeleteMe = false;
+					//
+					//						for(Fruit f: UpdatedFruitsList.keySet()) {
+					//							if(f.toString().equals(f2.toString())) {
+					//								found_dontDeleteMe = true;
+					//								UpdatedFruitsList.remove(f); //this fruit has already found a match in our OWN fruits list. No need to check it again.
+					//							}
+					//						}
+					//						if(!found_dontDeleteMe) {// if you didn't find this fruit from my OWN list, kill it. It was already eaten.
+					//							gameGraph.Fruits.remove(f2);
+					//						}
+					//					}
+					//
+					//					//now, every fruit still remaining in the UpdatedFruitsList is a new one,
+					//					//as we removed the ones that we got from the server, but were already in our OWN list.
+					//					//So - we should add the remaining ones on that list.
+					//
+					//					for(Fruit f: UpdatedFruitsList.keySet()) {
+					//						gameGraph.addFruit(f);
+					//					}
+					//
+					//
+					//
+					//
+					//
+					
+					
+					if(amoutOfRobotsInGame==1) {
+						gameGraph.Fruits = new Fruit[15];
+//						gameGraph.Fruits.clear();
+						Iterator<String> f_iter = game.getFruits().iterator();
+						while(f_iter.hasNext()) {
+							try {
+								Fruit f = new Fruit(f_iter.next());
+								gameGraph.addFruit(f);
+							} catch (Exception e) {}
+						}
+					}
+
+
+					//					repaintThread = new Thread(_repaintGUIClass);
+					//					repaintThread.run();
+					//					long now = System.currentTimeMillis();
 					moveRobots(game, gameGraph, gui);
-					//gui.graphComponent.repaint();
+					if(amoutOfRobotsInGame==1) { gui.graphComponent.repaint();}
 					long timePassed = System.currentTimeMillis()-now;
 					Thread.sleep(refresh_rate-timePassed);
 					//lastUpdateTime = System.currentTimeMillis();
@@ -257,16 +270,23 @@ public class AutomaticGameClass{
 						//							dest = nextNode(game,robotId,gameGraph);
 						//							System.out.println("gave dest " + dest);
 						//						}
+						
+						
+						if(amoutOfRobotsInGame>1) {
+							if(gameGraph.Robots.get(robotId).getPathToFruit().size()<=1) { //0 no path 1 only previous src node exists
+								dest = nextNode(game,robotId,gameGraph);
+								System.out.println("gave dest " + dest);
+							}
+							else {//still has path. take the node at index 1 and remove it.
+								dest = gameGraph.Robots.get(robotId).getPathToFruit().get(1).getKey();
+								gameGraph.Robots.get(robotId).getPathToFruit().remove(1);
 
-						if(gameGraph.Robots.get(robotId).getPathToFruit().size()<=1) { //0 no path 1 only previous src node exists
+							}
+						}
+						else {//only 1 robot in the game. Always re-calculate closest fruit.
 							dest = nextNode(game,robotId,gameGraph);
-							System.out.println("gave dest " + dest);
 						}
-						else {//still has path. take the node at index 1 and remove it.
-							dest = gameGraph.Robots.get(robotId).getPathToFruit().get(1).getKey();
-							gameGraph.Robots.get(robotId).getPathToFruit().remove(1);
-
-						}
+						
 
 						game.chooseNextEdge(robotId, dest);
 						//						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
@@ -275,7 +295,7 @@ public class AutomaticGameClass{
 						//						grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
 					}
 					else {
-						//						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
+						if(amoutOfRobotsInGame==1) gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
 						gameGraph.Robots.get(robotId).setDest(dest);
 					}
 				} 
