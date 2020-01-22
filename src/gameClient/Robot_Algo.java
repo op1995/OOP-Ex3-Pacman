@@ -98,8 +98,10 @@ public class Robot_Algo {
 			double dist = 0;
 			try {
 				Fruit minDestFruit = new Fruit();
-				for(Fruit f1 : gameGraph.Fruits.keySet()) {
-					Fruit f = f1;
+//				for(Fruit f1 : gameGraph.Fruits.keySet()) {
+				for (int i = 0; i < gameGraph.Fruits.length; i++) {
+					if(gameGraph.Fruits[i]==null) {continue;}
+					Fruit f = gameGraph.Fruits[i];
 					boolean fbool = !f.getisAlive();
 					if(fbool) {
 						double weight = f.getEdge().getWeight();
@@ -111,7 +113,10 @@ public class Robot_Algo {
 						}
 					}
 				}
-				for(Fruit f : gameGraph.Fruits.keySet()) {
+				for (int i = 0; i < gameGraph.Fruits.length; i++) {
+					if(gameGraph.Fruits[i]==null) {continue;}
+					Fruit f = gameGraph.Fruits[i];
+//				for(Fruit f : gameGraph.Fruits.keySet()) { //this part marks any fruits on the same edge the robot is heading to as alive. This way only 1 robot will go to the same edge.
 					if(f.getEdge().getSrc() == minDestFruit.getEdge().getSrc()) {
 						f.setisAlive(true);
 					}

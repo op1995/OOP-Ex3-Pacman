@@ -144,13 +144,14 @@ public class GraphComponent extends JComponent{
 		for (int r : this.graph.Robots.keySet()) {
 			int x = (int) ((graph.Robots.get(r).getPos().x()-rangex.get_min())*X);
 			int y = (int) ((graph.Robots.get(r).getPos().y()-rangey.get_max())*Y);
+			g.setColor(Color.RED);
+			g.drawString(graph.Robots.get(r).getPathToFruit().toString(), x-NODE_RADIUS, y-NODE_RADIUS);
 			try {
 				BufferedImage image = ImageIO.read(new File("pics\\pacman1.gif"));
 				g.drawImage(image.getScaledInstance(NODE_RADIUS*5, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
 				g.setColor(Color.BLACK);
 				//					g.drawString(String.valueOf(graph.Robots.get(r).getDest()), x-NODE_RADIUS, y-NODE_RADIUS);
-				g.setColor(Color.RED);
-				g.drawString(graph.Robots.get(r).getPathToFruit().toString(), x-NODE_RADIUS, y-NODE_RADIUS);
+
 
 			} catch (IOException e) {
 				try {
@@ -174,9 +175,16 @@ public class GraphComponent extends JComponent{
 	public void paintFruits(Graphics g) {
 		double X=width/rangex.get_length();
 		double Y=(0-height)/rangey.get_length();
-		for(Fruit f : this.graph.Fruits.keySet()) {
+//		for(Fruit f : this.graph.Fruits.keySet()) {
+		for (int i = 0; i < graph.Fruits.length; i++) {
+			if(graph.Fruits[i]==null) {continue;}
+			Fruit f = graph.Fruits[i];
+			
 			int x = (int) ((f.getPos().x()-rangex.get_min())*X);
 			int y = (int) ((f.getPos().y()-rangey.get_max())*Y);
+			String isAlive = "FALSE";
+			if(f.getisAlive()) {isAlive="TRUE";}
+			g.drawString(isAlive, x-NODE_DIAMETER, y-NODE_DIAMETER);
 			if(f.getType() == -1) {
 				try {
 					BufferedImage image = ImageIO.read(new File("pics\\orange.gif"));

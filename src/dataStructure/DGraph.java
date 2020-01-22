@@ -27,7 +27,8 @@ public class DGraph implements graph, Serializable{
 	public HashMap<Integer, Node> Nodes;
 	public HashMap<Integer, HashMap<Integer,Edge>> Edges;
 	public HashMap<Integer, Robot> Robots;
-	public HashMap<Fruit, Edge> Fruits;
+//	public  HashMap<Fruit, Edge> Fruits;
+	public  Fruit[] Fruits;
 	private int EdgeCount;
 	private int MC;
 	/*
@@ -37,7 +38,8 @@ public class DGraph implements graph, Serializable{
 		this.Nodes = new HashMap<Integer, Node>();
 		this.Edges = new HashMap<Integer, HashMap<Integer,Edge>>();
 		this.Robots = new HashMap<Integer, Robot>();
-		this.Fruits = new HashMap<Fruit, Edge>();
+//		this.Fruits = new HashMap<Fruit, Edge>();
+		this.Fruits = new Fruit[15];
 		this.EdgeCount = 0;
 		this.MC = 0;
 	}
@@ -276,13 +278,30 @@ public class DGraph implements graph, Serializable{
 		}
 		f.setEdge(edge);
 		this.MC++;
-		this.Fruits.put(f,edge);
+//		this.Fruits.put(f,edge);
+		for (int i = 0; i < Fruits.length; i++) {
+			if(this.Fruits[i]==null) {
+				this.Fruits[i]=f;
+				i=Fruits.length;
+			}
+		}
 	}
 	public void removeFruit(Fruit f) {
-		if (!this.Fruits.containsKey(f)) {
+		boolean found = false;
+		for (int i = 0; i < Fruits.length && !found; i++) {
+			if(this.Fruits[i]==f) {
+				this.Fruits[i]=null;
+				found = true;
+			}
+		}
+		if(!found) {
 			throw new RuntimeException("The given Fruit doesn't belong to the Fruits in the Game");
 		}
-		this.Fruits.remove(f);
+		
+//		if (!this.Fruits.containsKey(f)) {
+//			throw new RuntimeException("The given Fruit doesn't belong to the Fruits in the Game");
+//		}
+//		this.Fruits.remove(f);
 	}
 //	public void removeFruitsinEdge(Edge e) {
 //		if (!(this.Edges.containsKey(e.getSrc()) && this.Edges.get(e.getSrc()).containsKey(e.getDest()))) {

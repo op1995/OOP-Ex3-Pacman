@@ -131,7 +131,11 @@ public class KML_Logger implements Runnable {
 	public String Fruits() {
 		String FruitsInfo="";
 		try {
-			for(Fruit fruit: gameGraph.Fruits.keySet()) {
+//			for(Fruit fruit: gameGraph.Fruits.keySet()) {
+			for (int i = 0; i < gameGraph.Fruits.length; i++) {
+				if(gameGraph.Fruits[i]==null) {continue;}
+				Fruit fruit = gameGraph.Fruits[i];
+			
 				FruitsInfo+=	"<Placemark>\r\n"+
 						"<TimeSpan>\r\n"+
 						"<begin>"+LocalDateTime.now()+"</begin>\r\n" + 

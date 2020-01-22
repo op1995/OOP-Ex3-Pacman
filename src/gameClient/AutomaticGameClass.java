@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
@@ -31,6 +32,7 @@ public class AutomaticGameClass{
 	 * This class is for the automatic robot playing. 
 	 */
 	static int myMovesCounter = 0;
+	private static long now;
 	public static void main(String[] a) {
 		int scenario_num = -1;
 		scenario_num = Integer.valueOf(JOptionPane.showInputDialog("Input a scenario Number between 0 to 23."));
@@ -52,6 +54,7 @@ public class AutomaticGameClass{
 	 * @param lastUpdateTime The local time.
 	 */
 	public static void runAuto(DGraph gameGraph , int scenario_num) {
+//		long now = System.currentTimeMillis();
 		boolean KML_flag = false;
 		myMovesCounter = 0;
 		game_service game = Game_Server.getServer(scenario_num); // input will be from [0,23] games
@@ -68,7 +71,7 @@ public class AutomaticGameClass{
 			if(kml_flag == 0) {
 				KML_flag = true;
 			}
-			
+
 		} catch (Exception e) {}
 		try {
 			line = new JSONObject(gameToString);
@@ -77,7 +80,8 @@ public class AutomaticGameClass{
 			System.out.println("gameToString = " + gameToString);
 			System.out.println("gameGraphString = " + gameGraphString);
 			// the list of fruits should be considered in your solution.
-			gameGraph.Fruits.clear();
+//			gameGraph.Fruits.clear();
+			gameGraph.Fruits = new Fruit[15];
 			Iterator<String> fruits_iterator = game.getFruits().iterator();
 			List<String> gameFruitsList = game.getFruits();
 			System.out.println("gameFruitsList = " + gameFruitsList.toString());
@@ -101,7 +105,7 @@ public class AutomaticGameClass{
 		catch (JSONException e) {
 			// TODO: handle exception
 		}
-		int refresh_rate = 105;
+		int refresh_rate = 104;
 		if(scenario_num==5) {refresh_rate=125;}
 		else if(scenario_num==23) {refresh_rate=60;} //different games need different moves count.
 		gui.scenario_num = scenario_num;
@@ -111,24 +115,90 @@ public class AutomaticGameClass{
 			Thread kmlThread = new Thread(kml);
 			kmlThread.start();
 		}
+
+		repaintGUIClass _repaintGUIClass = new repaintGUIClass(game,gameGraph,gui);
+		Thread repaintThread = new Thread(_repaintGUIClass);
+		repaintThread.start();
+		
+//		fruitsRefresher _fruitsRefresher = new fruitsRefresher(game,gameGraph,gui);
+//		Thread fruitsRefreshThread = new Thread(_fruitsRefresher);
+//		fruitsRefreshThread.start();
+		
+		
+		
+//		Robot_Algo _RobotAlgo = new Robot_Algo(gameGraph);
 		try {
-//			long lastUpdateTime = System.currentTimeMillis();
+			//long lastUpdateTime = System.currentTimeMillis();
 			while(game.isRunning()) {
-//				if(System.currentTimeMillis() - lastUpdateTime >= refresh_rate) { //if enough time has passed (50 milliseconds) 
-					try {
-						gameGraph.Fruits.clear();
-						Iterator<String> f_iter = game.getFruits().iterator();
-						while(f_iter.hasNext()) {
-							try {
-								Fruit f = new Fruit(f_iter.next());
-								gameGraph.addFruit(f);
-							} catch (Exception e) {}
-						}
-						moveRobots(game, gameGraph, gui);
-						gui.graphComponent.repaint();
-						Thread.sleep(refresh_rate);
-					} catch (Exception e) {}
-//				}
+				//				if(System.currentTimeMillis() - lastUpdateTime >= refresh_rate) { //if enough time has passed (50 milliseconds) 
+				try {
+					
+					
+					
+					
+//					HashMap<Fruit, Edge> UpdatedFruitsList = new HashMap<Fruit, Edge>();
+//					Iterator<String> _f_iter = game.getFruits().iterator();
+//					while(_f_iter.hasNext()) {
+//						try {
+//							Fruit f = new Fruit(_f_iter.next());
+//							f.setEdge(_RobotAlgo.findEdge(f));
+//							UpdatedFruitsList.put(f, f.getEdge());
+//						}
+//						catch (Exception e) {
+//							System.err.println("Error in refreshong the fruits");
+//							e.printStackTrace();
+//						}
+//					}
+//
+//					//first, check for every fruit in my OWN list, if they exist in the freshly fetched fruits list from the server.
+//					//if so, leave them alone.
+//					//otherwise, delete them. They were already eaten.
+//
+//					for(Fruit f2: gameGraph.Fruits.keySet()) {
+//						boolean found_dontDeleteMe = false;
+//
+//						for(Fruit f: UpdatedFruitsList.keySet()) {
+//							if(f.toString().equals(f2.toString())) {
+//								found_dontDeleteMe = true;
+//								UpdatedFruitsList.remove(f); //this fruit has already found a match in our OWN fruits list. No need to check it again.
+//							}
+//						}
+//						if(!found_dontDeleteMe) {// if you didn't find this fruit from my OWN list, kill it. It was already eaten.
+//							gameGraph.Fruits.remove(f2);
+//						}
+//					}
+//
+//					//now, every fruit still remaining in the UpdatedFruitsList is a new one,
+//					//as we removed the ones that we got from the server, but were already in our OWN list.
+//					//So - we should add the remaining ones on that list.
+//
+//					for(Fruit f: UpdatedFruitsList.keySet()) {
+//						gameGraph.addFruit(f);
+//					}
+//
+//
+//
+//
+//
+					//					gameGraph.Fruits.clear();
+					//					Iterator<String> f_iter = game.getFruits().iterator();
+					//					while(f_iter.hasNext()) {
+					//						try {
+					//							Fruit f = new Fruit(f_iter.next());
+					//							gameGraph.addFruit(f);
+					//						} catch (Exception e) {}
+					//					}
+
+//					repaintThread = new Thread(_repaintGUIClass);
+//					repaintThread.run();
+//					long now = System.currentTimeMillis();
+					moveRobots(game, gameGraph, gui);
+					//gui.graphComponent.repaint();
+					long timePassed = System.currentTimeMillis()-now;
+					Thread.sleep(refresh_rate-timePassed);
+					//lastUpdateTime = System.currentTimeMillis();
+				} catch (Exception e) {}
+				//				}
 			}
 		} catch (Exception e) {}
 		String results = game.toString();
@@ -158,9 +228,11 @@ public class AutomaticGameClass{
 	 */
 	private static void moveRobots(game_service game, DGraph gameGraph, GraphGUI gui) {
 		List<String> log = game.move();
+		now = System.currentTimeMillis();
+		//		List<String> log = game.getRobots();
 		//		System.out.println("log.toS0tring() = " + log.toString());
 		myMovesCounter++;
-		int grade = 0;
+		//		int grade = 0;
 		if(log!=null) {
 			long t = game.timeToEnd();
 			for(int i=0;i<log.size();i++) {
@@ -173,19 +245,37 @@ public class AutomaticGameClass{
 					int dest = robotInfoFromJson.getInt("dest");
 					String pos = robotInfoFromJson.getString("pos");
 					if(dest==-1) {
-						if(!pos.equals(gameGraph.Nodes.get(gameGraph.Robots.get(robotId).getSrc()).getLocation().toString())) {
-							continue;
+						//						if(!pos.equals(gameGraph.Nodes.get(gameGraph.Robots.get(robotId).getSrc()).getLocation().toString())) {
+						//							continue;
+						//						}
+
+
+						//i'll try to change the code so it sets the robot's path and takes it's next dest from there.
+
+
+						//						if(gameGraph.Robots.get(robotId).getPathToFruit().size()==0) {
+						//							dest = nextNode(game,robotId,gameGraph);
+						//							System.out.println("gave dest " + dest);
+						//						}
+
+						if(gameGraph.Robots.get(robotId).getPathToFruit().size()<=1) { //0 no path 1 only previous src node exists
+							dest = nextNode(game,robotId,gameGraph);
+							System.out.println("gave dest " + dest);
 						}
-						
-						dest = nextNode(game,robotId,gameGraph);
+						else {//still has path. take the node at index 1 and remove it.
+							dest = gameGraph.Robots.get(robotId).getPathToFruit().get(1).getKey();
+							gameGraph.Robots.get(robotId).getPathToFruit().remove(1);
+
+						}
+
 						game.chooseNextEdge(robotId, dest);
-						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
+						//						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
 						gameGraph.Robots.get(robotId).setSrc(dest);
-						JSONObject GameInfoFromJson = new JSONObject(game.toString());
-						grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
+						//						JSONObject GameInfoFromJson = new JSONObject(game.toString());
+						//						grade = GameInfoFromJson.getJSONObject("GameServer").getInt("grade");
 					}
 					else {
-						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
+						//						gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
 						gameGraph.Robots.get(robotId).setDest(dest);
 					}
 				} 
@@ -203,7 +293,7 @@ public class AutomaticGameClass{
 	private static int nextNode(game_service game, int robotId, DGraph gameGraph) {
 		int ans = gameGraph.Robots.get(robotId).getSrc();
 		ArrayList<node_data> Path = new ArrayList<node_data>();
-		gameGraph.init(game.getGraph());
+		//		gameGraph.init(game.getGraph());
 		try {
 			//			System.out.println("gameGraph.Robots.get(robotId).getSrc() = " + gameGraph.Robots.get(robotId).getSrc());
 			//			System.out.println("im here 1");
@@ -212,8 +302,12 @@ public class AutomaticGameClass{
 			//			System.out.println("im here 2");
 			Fruit currentClosestFruit = RobotAlgo.getClosestFruit(gameGraph.Robots.get(robotId).getID(), game, gameGraph);
 			//			System.out.println("currentClosestFruit.toString() = " + currentClosestFruit.toString());
-			Edge edge = RobotAlgo.findEdge(currentClosestFruit); //we should change this to get fruit's edge. This was tried but didn't always work. check in to this.
-			currentClosestFruit.setEdge(edge);
+
+			//			Edge edge = RobotAlgo.findEdge(currentClosestFruit); //we should change this to get fruit's edge. This was tried but didn't always work. check in to this.
+			//			currentClosestFruit.setEdge(edge);
+
+			//commented out the 2 rows above, as getClosestFruit method already sets the edge for the returned fruit.
+
 			if(currentClosestFruit.getEdge() != null) {
 				//				System.out.println("gameGraph.Fruits.toString() = " + gameGraph.Fruits.toString());
 				Graph_Algo Algo =  new Graph_Algo(gameGraph);
@@ -224,11 +318,16 @@ public class AutomaticGameClass{
 				Path = (ArrayList<node_data>) Algo.shortestPath(gameGraph.Robots.get(robotId).getSrc(), currentClosestFruit.getEdge().getSrc());
 				//				System.out.println("im here 4");
 				Path.add(gameGraph.getNodes().get(currentClosestFruit.getEdge().getDest()));
+
+
+				//i'll try to change the code so it sets the robot's path and takes it's next dest from there.
+				gameGraph.Robots.get(robotId).setPathToFruit(Path);
 				gameGraph.Robots.get(robotId).setisEating(true);
 				//				System.out.println("im here 5");
 				ans = Path.get(1).getKey();
+				gameGraph.Robots.get(robotId).getPathToFruit().remove(1); //remove what you gave back
 				//				System.out.println("im here 6");
-				Path.add(gameGraph.getNodes().get(gameGraph.Robots.get(robotId).getSrc()));
+				//				Path.add(gameGraph.getNodes().get(gameGraph.Robots.get(robotId).getSrc())); //why is this here?
 				//				System.out.println("im here 7");
 				return ans;
 			}

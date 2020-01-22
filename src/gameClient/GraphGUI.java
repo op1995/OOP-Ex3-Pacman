@@ -33,6 +33,7 @@ import Server.game_service;
 import algorithms.Graph_Algo;
 import dataStructure.DGraph;
 import dataStructure.Node;
+import dataStructure.graph;
 import dataStructure.node_data;
 import utils.Point3D;
 import utils.Range;
@@ -224,7 +225,8 @@ public class GraphGUI{
 		}
 		game = Game_Server.getServer(scenario_num);
 		String gameGetGraph = game.getGraph();
-		Graph.Fruits.clear();
+//		Graph.Fruits.clear();
+		Graph.Fruits = new Fruit[15];
 		Graph.Robots.clear();
 		Graph.init(gameGetGraph);
 		execute();
@@ -275,15 +277,20 @@ public class GraphGUI{
 							}
 						}
 					}
-					for (Fruit fruit : Graph.Fruits.keySet()) {
+//					for (Fruit fruit : Graph.Fruits.keySet()) {
+					for (int i = 0; i < Graph.Fruits.length; i++) {
+						if(Graph.Fruits[i]==null) {continue;}
+						Fruit fruit = Graph.Fruits[i];
+						
+					
 						int robotX = (int) ((fruit.getPos().x()-rangex.get_min())*X);//TODO change name this is fruit
 						int robotY = (int) ((fruit.getPos().y()-rangey.get_max())*Y);//TODO
 						if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
 							try {
-								if(Graph.Fruits.containsKey(fruit)) {//TODO not needed condition (always true) 
-									chosenFruit = fruit;
-									//							    	System.out.println("fruit.getType() = " + fruit.getType());
-								}
+//								if(Graph.Fruits.containsKey(fruit)) {//TODO not needed condition (always true) 
+//									chosenFruit = fruit;
+//									//							    	System.out.println("fruit.getType() = " + fruit.getType());
+//								}
 							} catch (Exception e2) {
 								System.out.println(e2);
 							}

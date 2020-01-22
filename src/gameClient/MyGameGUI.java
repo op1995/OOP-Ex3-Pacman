@@ -86,7 +86,8 @@ public class MyGameGUI{
 			System.out.println("gameToString = " + gameToString);
 			System.out.println("gameGraphString = " + gameGraphString);
 			// the list of fruits should be considered in your solution
-			gameGraph.Fruits.clear();
+//			gameGraph.Fruits.clear();
+			gameGraph.Fruits = new Fruit[15];
 			Iterator<String> fruits_iterator = game.getFruits().iterator();
 			while(fruits_iterator.hasNext()) {
 				try {
@@ -120,7 +121,8 @@ public class MyGameGUI{
 
 			if(System.currentTimeMillis() - lastUpdateTime >= 50) //if enough time has passed (50 milliseconds) 
 				try {
-					gameGraph.Fruits.clear();
+//					gameGraph.Fruits.clear();
+					gameGraph.Fruits = new Fruit[15];
 					Iterator<String> f_iter = game.getFruits().iterator();
 					while(f_iter.hasNext()) {
 						try {
