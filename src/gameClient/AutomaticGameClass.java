@@ -19,6 +19,7 @@ import Server.game_service;
 import algorithms.Graph_Algo;
 import dataStructure.DGraph;
 import dataStructure.Edge;
+import dataStructure.Node;
 import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
@@ -28,10 +29,11 @@ import oop_dataStructure.oop_graph;
 import utils.Point3D;
 
 public class AutomaticGameClass{
-	
+
 	static int amoutOfRobotsInGame = 0;
 	static boolean oldCode = false;
-	
+	static int _scenario_num = -1;
+
 	/**
 	 * This class is for the automatic robot playing. 
 	 */
@@ -58,6 +60,7 @@ public class AutomaticGameClass{
 	 * @param lastUpdateTime The local time.
 	 */
 	public static void runAuto(DGraph gameGraph , int scenario_num) {
+		_scenario_num = scenario_num;
 		boolean KML_flag = false;
 		myMovesCounter = 0;
 		int id = 315554022;
@@ -111,21 +114,23 @@ public class AutomaticGameClass{
 		}
 		catch (JSONException e) {}
 		int refresh_rate = 105;
-		
+
 		if(scenario_num==5) {refresh_rate=125;}
 		else if(scenario_num==23) {refresh_rate=60;} //different games need different moves count.
-		else if(scenario_num==20) {refresh_rate=97;}
-//		gui.scenario_num = scenario_num;
+		else if(scenario_num==20) {refresh_rate=104;}
+		//		gui.scenario_num = scenario_num;
 		game.startGame();
 		KML_Logger kml = new KML_Logger(gameGraph, game,scenario_num);
 		if(KML_flag) {
 			Thread kmlThread = new Thread(kml);
 			kmlThread.start();
 		}
-		
-//		if(amoutOfRobotsInGame>1 || scenario_num==20) {oldCode=true;}
-		if(amoutOfRobotsInGame>1) {oldCode=true;}
-		
+
+		//		if(amoutOfRobotsInGame==1 || scenario_num==20) {oldCode=true;}
+		if(amoutOfRobotsInGame==1) {oldCode=true;}
+		if(oldCode) {System.out.println("oldcode");}
+
+
 		if(!oldCode) {
 			repaintGUIClass _repaintGUIClass = new repaintGUIClass(game,gameGraph,gui);
 			Thread repaintThread = new Thread(_repaintGUIClass);
@@ -138,7 +143,7 @@ public class AutomaticGameClass{
 				try {
 					if(oldCode) {
 						gameGraph.Fruits = new Fruit[15];
-//						gameGraph.Fruits.clear();
+						//						gameGraph.Fruits.clear();
 						Iterator<String> f_iter = game.getFruits().iterator();
 						while(f_iter.hasNext()) {
 							try {
@@ -187,26 +192,116 @@ public class AutomaticGameClass{
 		now = System.currentTimeMillis();
 		myMovesCounter++;
 		if(log!=null) {
-			long t = game.timeToEnd();
+			//			long t = game.timeToEnd();
 			for(int i=0;i<log.size();i++) {
 				String robot_json = log.get(i);
 				try {
 					JSONObject line = new JSONObject(robot_json);
 					JSONObject robotInfoFromJson = line.getJSONObject("Robot");
 					int robotId = robotInfoFromJson.getInt("id");
-					int src = robotInfoFromJson.getInt("src");
+					//					int src = robotInfoFromJson.getInt("src");
 					int dest = robotInfoFromJson.getInt("dest");
-					String pos = robotInfoFromJson.getString("pos");
+					//					String pos = robotInfoFromJson.getString("pos");
+
+
+					if(_scenario_num==20) { //this part is possibly good for all the levels! but I only tested it in 20 so far, so I am limiting it
+						//check if the fruit I am after is still there
+
+						ArrayList<node_data> robotPath = gameGraph.Robots.get(robotId).PathToFruit;
+						if(robotPath.size()>1) {
+							int lastDest = ((Node)robotPath.get(robotPath.size()-1)).getKey();
+							boolean foundMyFruitInTheCurrentList = false;
+							for (int j = 0; j < gameGraph.Fruits.length && !foundMyFruitInTheCurrentList; j++) {
+								if(gameGraph.Fruits[j]==null) {continue;}
+								if (lastDest==gameGraph.Fruits[j].getEdge().getDest()) {foundMyFruitInTheCurrentList = true;}							
+							}
+							//if you got here, and didn't find your fruit in the graph, it isn't there anymore.
+							//delete your path, and get a new one.
+
+							if(!foundMyFruitInTheCurrentList) {
+								robotPath.clear();
+								System.out.println("I think my fruit was already eaten! I'm droping my list!");
+								gameGraph.Robots.get(robotId).addedAnotherFruitToMyPath = false; //when you empty the list, also mark this robot as ready for adding another fruit to the path that will be found for it
+
+							}
+
+						}
+
+
+						//let's try to check for every node in my path, if there is a fruit that it's src or dest is in my path already
+						// if so, add that to my path, and mark it is alive
+
+						//&& robotPath.size()<5
+
+						if(!gameGraph.Robots.get(robotId).addedAnotherFruitToMyPath && robotPath.size()>2 ) { //only attempt this if you have a longer path then 2
+
+							boolean keepLooking = true;
+							for (int k = 1; keepLooking && k<3 && k < robotPath.size()-1; k++) {
+								//-1 so to not add the same fruit again, from 1 because 1 is original src, where he started moving from. not relevant.
+								//also only check for the next 2 nodes
+								int currentNodeInCurrentPath = ((Node)robotPath.get(k)).getKey();
+
+								for (int j = 0; keepLooking && j < gameGraph.Fruits.length ; j++) {
+									if(gameGraph.Fruits[j]==null) {continue;}
+									if (currentNodeInCurrentPath==gameGraph.Fruits[j].getEdge().getSrc()) {//One of the nodes in my path is another fruit's src
+
+										System.out.println("1I added a fruit that was next to my path.");
+										Node addMe = gameGraph.Nodes.get(gameGraph.Fruits[j].getEdge().getDest()); //add the dest of the extra found fruit
+										Node thenAddMeAgain = gameGraph.Nodes.get(currentNodeInCurrentPath); //then go back to your original path
+
+										System.out.println("robotPath before = " + robotPath.toString());
+
+										robotPath.add(k+1, addMe);
+										robotPath.add(k+2, thenAddMeAgain);
+
+										System.out.println("robotPath after = " + robotPath.toString());
+
+										if(gameGraph.Fruits[j].getisAlive()) {System.out.println("Even though it was already alive.");}
+										//									gameGraph.Fruits[j].setisAlive(true);
+										keepLooking = false; //one fruit is enough. only add that.
+
+										gameGraph.Robots.get(robotId).addedAnotherFruitToMyPath = true; //mark this robot as already had a fruit added to him, so as to not try this again.
+
+									}		
+
+									//didn't check this yet. above part (only src check) is good enough to pass level 20 that we were stuck on, so I didn't bother (it's 1:36AM, ok?!)
+
+									//								//same code, but for dest
+									//								else if(currentNodeInCurrentPath==gameGraph.Fruits[j].getEdge().getDest()) {
+									//									System.out.println("2I added a fruit that was next to my path.");
+									//									Node addMe = gameGraph.Nodes.get(gameGraph.Fruits[j].getEdge().getSrc()); //add the src of the extra found fruit
+									//									Node thenAddMeAgain = gameGraph.Nodes.get(currentNodeInCurrentPath); //then go back to your original path
+									//									robotPath.add(k+1, addMe);
+									//									robotPath.add(k+2, thenAddMeAgain);
+									//									if(gameGraph.Fruits[j].getisAlive()) {System.out.println("Even though it was already alive.");}
+									////									gameGraph.Fruits[j].setisAlive(true);
+									//									keepLooking = false; //one fruit is enough. only add that.
+									//
+									//								}
+
+								}
+							}
+						}
+					}//end if _scenario_num==20
+
 					if(dest==-1) {
 						if(!oldCode) {
 							if(gameGraph.Robots.get(robotId).getPathToFruit().size()<=1) { //0 no path 1 only previous src node exists
 								dest = nextNode(game,robotId,gameGraph);
-								System.out.println("gave dest " + dest);
+								//								System.out.println("gave dest " + dest);
+								gameGraph.Robots.get(robotId).addedAnotherFruitToMyPath = false; //for level 20 - when you get a new path, also mark this robot as ready for adding another fruit to the path that was found for it
+
 							}
 							else {//still has path. take the node at index 1 and remove it.
 								dest = gameGraph.Robots.get(robotId).getPathToFruit().get(1).getKey();
 								gameGraph.Robots.get(robotId).getPathToFruit().remove(1);
+
 							}
+
+
+
+
+
 						}
 						else {//only 1 robot in the game. Always re-calculate closest fruit.
 							dest = nextNode(game,robotId,gameGraph);
@@ -220,6 +315,45 @@ public class AutomaticGameClass{
 						if(oldCode) gameGraph.Robots.get(robotId).setPos(new Point3D(robotInfoFromJson.getString("pos")));
 						gameGraph.Robots.get(robotId).setDest(dest);
 					}
+
+
+
+
+
+
+					//welp, this didn't help stage 20
+					//even if dest isn't -1, look for more fruits close to you!
+
+					//					ArrayList<node_data> robotPath = gameGraph.Robots.get(robotId).PathToFruit;
+					//					Graph_Algo _Algo =  new Graph_Algo(gameGraph);
+					//					ArrayList<node_data> Path = new ArrayList<node_data>();
+					//					int robotLastNodeInPath = ((Node) robotPath.get(robotPath.size()-1)).getKey();
+					//					boolean addedAnotherFruit = false;
+					//					//for every fruit, check if is within 5 nodes of the target last node in the robot's path.
+					//					//if so, and it isn't alive, get that as well.
+					//					for (int j = 0; j < gameGraph.Fruits.length && addedAnotherFruit; j++) { //
+					//						if(gameGraph.Fruits[j]==null) {continue;}
+					//						Fruit f2 = gameGraph.Fruits[i];
+					//						if(f2.getisAlive()) {continue;} //don't take that fruit if it's already alive.
+					//						int f2Src = f2.getEdge().getSrc();
+					//						Path = (ArrayList<node_data>) _Algo.shortestPath(robotLastNodeInPath, f2Src);
+					//						Path.remove(0);
+					//						Path.add(gameGraph.getNode(f2.getEdge().getDest()));
+					//						
+					//						System.out.println("Found another fruit, and it is this much hopes from my current fruit = " + Path.size());
+					//						
+					//						if(Path.size()<=5) {
+					//							robotPath.addAll(Path);
+					//							addedAnotherFruit = false;	
+					//							System.out.println("Managed to add another fruit to the path!");
+					//						}
+					//
+					//
+					//
+					//
+					//					}
+
+
 				} 
 				catch (JSONException e) {e.printStackTrace();}
 			}

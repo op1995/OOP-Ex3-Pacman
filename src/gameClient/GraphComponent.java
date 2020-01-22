@@ -155,8 +155,8 @@ public class GraphComponent extends JComponent{
 		for (int r : this.graph.Robots.keySet()) {
 			int x = (int) ((graph.Robots.get(r).getPos().x()-rangex.get_min())*X);
 			int y = (int) ((graph.Robots.get(r).getPos().y()-rangey.get_max())*Y);
-			//			g.setColor(Color.RED);
-			//			g.drawString(graph.Robots.get(r).getPathToFruit().toString(), x-NODE_RADIUS, y-NODE_RADIUS);
+						g.setColor(Color.RED);
+						g.drawString(graph.Robots.get(r).getPathToFruit().toString(), x-NODE_RADIUS, y-NODE_RADIUS);
 			try {
 				BufferedImage image = ImageIO.read(new File("pics\\pacman1.gif"));
 				g.drawImage(image.getScaledInstance(NODE_RADIUS*5, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);

@@ -14,7 +14,8 @@ public class Robot extends Thread{
 	private double speed;
 	private Point3D position; // based on pos.
 	private boolean isEating;
-	private ArrayList<node_data> PathToFruit;
+	public ArrayList<node_data> PathToFruit;
+	public boolean addedAnotherFruitToMyPath = false;
 	/**
 	 * A constructor.
 	 * @param Json A JSON String that represents the robot.
