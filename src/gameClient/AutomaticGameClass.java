@@ -204,7 +204,7 @@ public class AutomaticGameClass{
 					//					String pos = robotInfoFromJson.getString("pos");
 
 
-					if(_scenario_num==20) { //this part is possibly good for all the levels! but I only tested it in 20 so far, so I am limiting it
+					if(_scenario_num==20 || _scenario_num==23) { //this part is possibly good for all the levels! but I only tested it in 20 so far, so I am limiting it
 						//check if the fruit I am after is still there
 
 						ArrayList<node_data> robotPath = gameGraph.Robots.get(robotId).PathToFruit;
