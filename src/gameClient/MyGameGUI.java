@@ -114,14 +114,14 @@ public class MyGameGUI{
 		}
 		catch (JSONException e) {}
 		JOptionPane.showMessageDialog(GraphGUI.frame, "Click OK to start the game.");
+		gui.chooseRobot = true;
+		GraphComponent.ManualModeOn = true;
 		game.startGame();
 		long lastUpdateTime = System.currentTimeMillis();
-		gui.chooseRobot = true;
 		while(game.isRunning()) {
 
 			if(System.currentTimeMillis() - lastUpdateTime >= 50) //if enough time has passed (50 milliseconds) 
 				try {
-//					gameGraph.Fruits.clear();
 					gameGraph.Fruits = new Fruit[15];
 					Iterator<String> f_iter = game.getFruits().iterator();
 					while(f_iter.hasNext()) {
@@ -134,7 +134,7 @@ public class MyGameGUI{
 					moveRobots(game, gameGraph, gui);
 					gui.graphComponent.repaint();
 					lastUpdateTime = System.currentTimeMillis();
-				} catch (Exception e) {}
+				} catch (Exception e) {e.printStackTrace();}
 		}
 
 		String results = game.toString();

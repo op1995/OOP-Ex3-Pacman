@@ -58,6 +58,7 @@ public class GraphComponent extends JComponent{
 	public static String Info;
 	public ArrayList<Integer> ScoresInScenario;
 	public HashMap<Integer, HashMap<Integer,Integer>> scores;
+	public static boolean ManualModeOn = false;
 	/** 
 	 *  Constructor.
 	 * @param Graph 
@@ -78,7 +79,7 @@ public class GraphComponent extends JComponent{
 		rangey=new Range(32.0950, 32.1130);
 		DB.UpdateScores();
 		this.scores = DB.getScores();
-		
+
 	}
 	/**
 	 * This method paints the nodes of this Graph.
@@ -155,8 +156,8 @@ public class GraphComponent extends JComponent{
 		for (int r : this.graph.Robots.keySet()) {
 			int x = (int) ((graph.Robots.get(r).getPos().x()-rangex.get_min())*X);
 			int y = (int) ((graph.Robots.get(r).getPos().y()-rangey.get_max())*Y);
-//						g.setColor(Color.RED);
-//						g.drawString(graph.Robots.get(r).getPathToFruit().toString(), x-NODE_RADIUS, y-NODE_RADIUS);
+			//						g.setColor(Color.RED);
+			//						g.drawString(graph.Robots.get(r).getPathToFruit().toString(), x-NODE_RADIUS, y-NODE_RADIUS);
 			try {
 				BufferedImage image = ImageIO.read(new File("pics\\pacman1.gif"));
 				g.drawImage(image.getScaledInstance(NODE_RADIUS*5, -1, Image.SCALE_SMOOTH), x-NODE_DIAMETER, y-NODE_DIAMETER,null);
@@ -241,23 +242,25 @@ public class GraphComponent extends JComponent{
 			paintNodes(g);
 			paintFruits(g);
 			paintRobots(g);
-			g.setColor(Color.BLACK);
-			if(this.scores.get(315554022).containsKey(this.gameLevel)) {
-				this.MyGrade = this.scores.get(315554022).get(this.gameLevel);
-//				Collections.sort( this.ScoresInScenario.indexOf(this.MyGrade) );
-				for(int i : scores.keySet()) {
-//					if(!this.ScoresInScenario.contains(scores.get(i).get(gameLevel))){
+			if(!ManualModeOn) {
+				g.setColor(Color.BLACK);
+				if(this.scores.get(315554022).containsKey(this.gameLevel)) {
+					this.MyGrade = this.scores.get(315554022).get(this.gameLevel);
+					//					Collections.sort( this.ScoresInScenario.indexOf(this.MyGrade) );
+					for(int i : scores.keySet()) {
+						//						if(!this.ScoresInScenario.contains(scores.get(i).get(gameLevel))){
 						this.ScoresInScenario.add(scores.get(i).get(gameLevel));
-//					}
+						//						}
+					}
+					Info = "Score : "+String.valueOf(this.grade)+ "      Scenario : " + String.valueOf(this.gameLevel) +
+							"    Rank In This scenario :" + String.valueOf(this.ScoresInScenario.indexOf(this.MyGrade))
+							+ "   Number of played games in the Server : " + String.valueOf(scores.get(315554022).size());
+					g.drawString(Info, 10, 10);
 				}
-				Info = "Score : "+String.valueOf(this.grade)+ "      Scenario : " + String.valueOf(this.gameLevel) +
-						"    Rank In This scenario :" + String.valueOf(this.ScoresInScenario.indexOf(this.MyGrade))
-						+ "   Number of played games in the Server : " + String.valueOf(scores.get(315554022).size());
-				g.drawString(Info, 10, 10);
-			}
-			else {
-				Info = "Score : "+String.valueOf(this.grade)+ "      Scenario : " + String.valueOf(this.gameLevel);
-				g.drawString(Info, 10, 10);
+				else {
+					Info = "Score : "+String.valueOf(this.grade)+ "      Scenario : " + String.valueOf(this.gameLevel);
+					g.drawString(Info, 10, 10);
+				}
 			}
 		} catch (Exception e) {e.printStackTrace();}
 

@@ -3,18 +3,18 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="data"/>
 	<classpathentry kind="src" path="pics"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5">
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-13.0.1">
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-13.0.1">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/shahe/git/OOP-Ex3-Pacman/lib/GameServer_v0.33.jar"/>
-	<classpathentry kind="var" path="JSON"/>
-	<classpathentry kind="lib" path="C:/Users/shahe/git/OOP-Ex3-Pacman/lib/mysql-connector-java-5.1.47.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/shahe/git/OOP-Ex3-Pacman/lib/GameServer_v0.33.jar"/>
+	<classpathentry exported="true" kind="var" path="JSON"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/shahe/git/OOP-Ex3-Pacman/lib/mysql-connector-java-5.1.47.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

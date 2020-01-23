@@ -42,7 +42,7 @@ public class GraphGUI{
 	GraphComponent graphComponent; 
 	DGraph Graph;
 	static JFrame frame;
-
+	public static int NODE_RADIUS = 10;
 	/** The window */
 	/** The node last selected by the user. */
 	private Node chosenNode;
@@ -106,8 +106,7 @@ public class GraphGUI{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JMenuBar mb=new JMenuBar();  
 		menu=new JMenu("Menu");  
-		saveImage=new JMenuItem("Save Image");  
-		Information=new JMenuItem("Information");
+		saveImage=new JMenuItem("Save Image"); 
 		menu.add(saveImage);
 		menu.add(Information);
 		mb.add(menu);  
@@ -143,39 +142,13 @@ public class GraphGUI{
 		});	
 		frame.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
-				graphComponent.height = e.getComponent().getHeight();
-				graphComponent.width = e.getComponent().getWidth();
-			}
-		});
-		Information.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO write the score and moves.
-				String Info = "Info About the Current Game: \n"
-						+ "Scenario Number :"+" "+"\n"
-						+ "We played all the games and were able to pass all the tests.\n"
-						+ "Scores: \n"
-						+ "	Scenario :\n:";
-
-				for(int i = 0; i< 24 ; i++) {
-					if(i%2 == 1) {
-						Info = Info + i+". ";
-					}
-					else {
-						Info = Info + i+". "+"\n";
-					}
-				}
-				Info = Info + "\n";
-				Info = Info + "	Ranking :\n";
-				for(int i = 0; i < 11; i++) {
-					if(i%2 == 1) {
-						Info = Info + " 	Rank in Scenario Number " + i + ": ";
-					}
-					else {
-						Info = Info + " 	Rank in Scenario Number " + i + ": "+"\n";
-					}
-				}
-				JOptionPane.showMessageDialog(frame, Info);
+//				if(!GraphComponent.ManualModeOn) {
+//					int newheight =  e.getComponent().getHeight();
+//					int newwidth = e.getComponent().getWidth();
+//					graphComponent.height = newheight;
+//					graphComponent.width = newwidth;
+//				}
+//				
 			}
 		});
 	}
@@ -219,16 +192,13 @@ public class GraphGUI{
 	 */
 	private class MyMouseListener extends MouseAdapter {
 		public void mouseReleased(MouseEvent e) {
-			if(a == true) {
-				AddRobot = true;
-			}
 			chooseRobot = true;
 		}
 		public void mousePressed(MouseEvent e) {
 			double mouseX = e.getX();
 			double mouseY = e.getY();
 			double X=width/rangex.get_length();
-			double Y=(0-height)/rangey.get_length();
+			double Y=(-height)/rangey.get_length();
 			if(chooseRobot == true) {
 				try {
 					for (int robot : Graph.Robots.keySet()) {
@@ -236,29 +206,22 @@ public class GraphGUI{
 						int robotY = (int) ((Graph.Robots.get(robot).getPos().y()-rangey.get_max())*Y);
 						if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
 							try {
-								if(Graph.Robots.containsKey(robot)) {//TODO not needed condition (always true)
-									chosenRobot = Graph.Robots.get(robot);
-									//							    	System.out.println("chosenRobot.getID() = " + chosenRobot.getID());
-								}
+								chosenRobot = Graph.Robots.get(robot);
+								System.out.println("chosenRobot.getID() = "+ chosenRobot.getID());
 							} catch (Exception e2) {
 								System.out.println(e2);
 							}
 						}
 					}
-//					for (Fruit fruit : Graph.Fruits.keySet()) {
 					for (int i = 0; i < Graph.Fruits.length; i++) {
 						if(Graph.Fruits[i]==null) {continue;}
 						Fruit fruit = Graph.Fruits[i];
-						
-					
-						int robotX = (int) ((fruit.getPos().x()-rangex.get_min())*X);//TODO change name this is fruit
-						int robotY = (int) ((fruit.getPos().y()-rangey.get_max())*Y);//TODO
-						if (Math.sqrt((robotX-mouseX)*(robotX-mouseX)+(robotY-mouseY)*(robotY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
+						int fruitX = (int) ((fruit.getPos().x()-rangex.get_min())*X);//TODO change name this is fruit
+						int fruitY = (int) ((fruit.getPos().y()-rangey.get_max())*Y);//TODO
+						if (Math.sqrt((fruitX-mouseX)*(fruitX-mouseX)+(fruitY-mouseY)*(fruitY-mouseY)) <= GraphComponent.NODE_RADIUS+1) {
 							try {
-//								if(Graph.Fruits.containsKey(fruit)) {//TODO not needed condition (always true) 
-//									chosenFruit = fruit;
-//									//							    	System.out.println("fruit.getType() = " + fruit.getType());
-//								}
+								System.out.println(fruit.toString());
+								chosenFruit = fruit;
 							} catch (Exception e2) {
 								System.out.println(e2);
 							}
@@ -286,17 +249,13 @@ public class GraphGUI{
 						Path = (ArrayList<node_data>) Algo.shortestPath(src, dest);
 						Path.add(Graph.getNodes().get(dest2));
 						Graph.Robots.get(chosenRobot.getID()).setPathToFruit(Path);
-						//						System.out.println("Manual mode - setting path of robot " + Graph.Robots.get(chosenRobot.getID()) + ". It is = " + Path.toString());
 						chosenFruit = null;
 						chosenRobot = null;
 					}
 					chosenFruit = null;
-				} catch (Exception e2) {}
+				} catch (Exception e2) {e2.printStackTrace();}
 			}//up till now we choose a robot and a fruit
 		}
-	}
-	public void AddRobot() {
-
 	}
 	private void initializeGraph() {}
 }
