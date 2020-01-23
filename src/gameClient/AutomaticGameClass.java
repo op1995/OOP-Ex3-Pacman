@@ -64,7 +64,7 @@ public class AutomaticGameClass{
 		boolean KML_flag = false;
 		myMovesCounter = 0;
 		int id = 315554022;
-//		Game_Server.login(id);
+		Game_Server.login(id);
 		int got_scenario_num = scenario_num;
 		game_service game = Game_Server.getServer(got_scenario_num); // you have [0,23] games
 		System.out.println("right after creating game = " + game.toString());
